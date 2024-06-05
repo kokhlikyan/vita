@@ -3,15 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\GithubController;
-
-Route::prefix('v1/auth')->group(function () {
-    Route::prefix('google')->controller(GoogleController::class)->group(function () {
-        Route::get('/', 'redirectToGoogle');
-        Route::get('/callback', 'handleGoogleCallback');
-    });
-
-    Route::prefix('github')->controller(GithubController::class)->group(function () {
-        Route::get('/', 'redirectToGithub');
-        Route::get('/callback', 'handleGithubCallback');
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Middleware\ProviderMiddleware;
+Route::prefix('v1')->group(function () {
+    Route::middleware(ProviderMiddleware::class)->controller(SocialiteController::class)->group(function () {
+        Route::get('/auth/{provider}', 'redirectToProvider');
+        Route::get('/auth/{provider}/callback', 'handleProviderCallback');
     });
 });
