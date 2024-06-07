@@ -7,5 +7,6 @@ Route::prefix('v1')->group(function () {
     Route::middleware(ProviderMiddleware::class)->controller(SocialiteController::class)->group(function () {
         Route::get('/auth/{provider}', 'redirectToProvider');
         Route::get('/auth/{provider}/callback', 'handleProviderCallback');
+        Route::post('/auth/{provider}/token', 'handleTokenAuth');
     });
 });
