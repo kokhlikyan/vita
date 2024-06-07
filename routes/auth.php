@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\Auth\GithubController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Middleware\ProviderMiddleware;
 Route::prefix('v1')->group(function () {
