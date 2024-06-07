@@ -102,7 +102,7 @@ class SocialiteController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/v1/auth/token",
+        path: "/api/v1/auth/{provider}/token",
         summary: "Authenticate with social provider",
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
@@ -116,6 +116,15 @@ class SocialiteController extends Controller
             )
         ),
         tags: ["Auth"],
+        parameters: [
+            new OA\Parameter(
+                name: "provider",
+                description: "The social provider (e.g., google, facebook)",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "string")
+            ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -152,8 +161,13 @@ class SocialiteController extends Controller
     )]
     public function handleTokenAuth(AuthWithTokenRequest $request, $provider): JsonResponse
     {
-        $user = Socialite::driver($provider)->stateless()->userFromToken($request->input('token'));
-        return $this->createOrFind($user, $request->input('provider'));
+        try {
+            $user = Socialite::driver($provider)->stateless()->userFromToken($request->input('token'));
+            return $this->createOrFind($user, $request->input('provider'));
+        }catch (ClientException $exception) {
+            Log::error(__METHOD__ . '->' . $exception->getMessage());
+            return response()->json(['message' => 'Invalid credentials provided.'], 422);
+        }
     }
 
 

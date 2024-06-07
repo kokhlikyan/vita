@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Repositories;
+use App\Models\Goal;
+use App\Repositories\Interfaces\GoalRepositoryInterface;
+
+class GoalRepository implements  GoalRepositoryInterface
+{
+    public function all()
+    {
+        return Goal::all();
+    }
+
+    public function create(array $data)
+    {
+        return Goal::query()->create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return Goal::where('id', $id)->update($data);
+    }
+
+    public function delete($id)
+    {
+        return Goal::destroy($id);
+    }
+
+    public function find($id)
+    {
+        return Goal::find($id);
+    }
+
+    public function findOwn($id, $user_id)
+    {
+        return Goal::where('id', $id)->where('user_id', $user_id)->first();
+    }
+}
