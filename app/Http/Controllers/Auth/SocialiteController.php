@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthWithTokenRequest;
 use App\Models\User;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\JsonResponse;
@@ -96,8 +97,69 @@ class SocialiteController extends Controller
     )]
     public function handleProviderCallback($provider): JsonResponse
     {
+        $user = Socialite::driver($provider)->stateless()->user();
+        return $this->createOrFind($user, $provider);
+    }
+
+    #[OA\Post(
+        path: "/api/v1/auth/token",
+        summary: "Authenticate with social provider",
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                required: [
+                    'token',
+                ],
+                properties: [
+                    new OA\Property(property: 'token', type: 'string'),
+                ],
+                type: 'object'
+            )
+        ),
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Successful authentication",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "status",
+                            description: "Status of the request",
+                            type: "boolean"
+                        ),
+                        new OA\Property(
+                            property: "token",
+                            description: "JWT token",
+                            type: "string"
+                        )
+                    ],
+                    type: "object"
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad Request"
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Unauthorized"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation Error",
+            ),
+        ]
+    )]
+    public function handleTokenAuth(AuthWithTokenRequest $request, $provider): JsonResponse
+    {
+        $user = Socialite::driver($provider)->stateless()->userFromToken($request->input('token'));
+        return $this->createOrFind($user, $request->input('provider'));
+    }
+
+
+    private function createOrFind($user, $provider): JsonResponse
+    {
         try {
-            $user = Socialite::driver($provider)->stateless()->user();
             $userCreated = User::query()->firstOrCreate(
                 [
                     'email' => $user->getEmail()
