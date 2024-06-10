@@ -6,7 +6,7 @@ use App\Repositories\Interfaces\GoalRepositoryInterface;
 
  class GoalService
 {
-    public function __construct(private GoalRepositoryInterface $goalRepository)
+    public function __construct(private readonly GoalRepositoryInterface $goalRepository)
     {
     }
 

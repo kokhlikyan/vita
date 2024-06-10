@@ -2,42 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateGoalRequest;
-use App\Http\Requests\UpdateGoalRequest;
-use App\Http\Resources\GoalResource;
-use App\Services\GoalService;
+use App\Http\Requests\CreateHabitRequest;
+use App\Http\Requests\UpdateHabitRequest;
+use App\Http\Resources\HabitResource;
+use App\Services\HabitService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
-class GoalController extends Controller
-{
 
-    public function __construct(private readonly GoalService $goalService)
+class HabitController extends Controller
+{
+    public function __construct(private readonly HabitService $habitService)
     {
     }
 
 
     #[OA\Get(
-        path: "/api/v1/goals",
-        summary: "Get all goals",
+        path: "/api/v1/habits",
+        summary: "Get all habits",
         security: [
             ['bearerAuth' => []]
         ],
-        tags: ["Goals"],
+        tags: ["Habits"],
         responses: [
             new OA\Response(
                 response: 200,
-                description: "List of goals",
+                description: "List of habits",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
                             property: 'data',
                             type: 'array',
                             items: new OA\Items(
-                                ref: "#/components/schemas/GoalSchema"
+                                ref: "#/components/schemas/HabitSchema"
                             )
                         )
                     ]
@@ -47,17 +47,16 @@ class GoalController extends Controller
     )]
     public function all(): AnonymousResourceCollection
     {
-        return GoalResource::collection($this->goalService->all());
+        return HabitResource::collection($this->habitService->all());
     }
 
-
     #[OA\Get(
-        path: "/api/v1/goals/{id}",
+        path: "/api/v1/habits/{id}",
         summary: "Find goal by ID",
         security: [
             ['bearerAuth' => []]
         ],
-        tags: ["Goals"],
+        tags: ["Habits"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -70,12 +69,12 @@ class GoalController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Goal found",
+                description: "Habit found",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
                             property: 'data',
-                            ref: "#/components/schemas/GoalSchema",
+                            ref: "#/components/schemas/HabitSchema",
                             type: 'object'
                         )
                     ]
@@ -89,19 +88,19 @@ class GoalController extends Controller
     )]
     public function findById($id): JsonResponse
     {
-        $goal = $this->goalService->find($id);
-        if (!$goal) {
+        $habit = $this->habitService->findById($id);
+        if (!$habit) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
         return response()->json([
-            'data' => new GoalResource($goal),
+            'data' => new HabitResource($habit)
         ]);
     }
 
 
     #[OA\Post(
-        path: "/api/v1/goals",
-        summary: "Create a new goal",
+        path: "/api/v1/habits",
+        summary: "Create a new habit",
         security: [
             ['bearerAuth' => []]
         ],
@@ -118,16 +117,16 @@ class GoalController extends Controller
                 type: 'object'
             )
         ),
-        tags: ["Goals"],
+        tags: ["Habits"],
         responses: [
             new OA\Response(
                 response: 201,
-                description: "Goal created",
+                description: "Habit created",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
                             property: 'data',
-                            ref: "#/components/schemas/GoalSchema",
+                            ref: "#/components/schemas/HabitSchema",
                             type: 'object'
                         )
                     ]
@@ -144,33 +143,106 @@ class GoalController extends Controller
 
         ]
     )]
-    public function create(CreateGoalRequest $request):JsonResponse
+    public function create(CreateHabitRequest $request): JsonResponse
     {
-
         try {
             $data = [
                 'user_id' => auth()->user()->id,
                 ...$request->validated()
             ];
-            $goal = $this->goalService->create($data);
+            $goal = $this->habitService->create($data);
             return response()->json([
-                'data' => new GoalResource($goal),
+                'data' => new HabitResource($goal),
             ], 201);
         } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json(['message' => 'Bad request'], 400);
         }
-
-
     }
 
-    #[OA\Delete(
-        path: "/api/v1/goals/{id}",
-        summary: "Delete goal by ID",
+
+    #[OA\Put(
+        path: "/api/v1/Habits/{id}",
+        summary: "Update habit by ID",
         security: [
             ['bearerAuth' => []]
         ],
-        tags: ["Goals"],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                required: [
+                    'name',
+                    'type',
+                ],
+                properties: [
+                    new OA\Property(property: 'title', type: 'string'),
+                    new OA\Property(property: 'details', type: 'string', nullable: true),
+                ],
+                type: 'object'
+            )
+        ),
+        tags: ["Habits"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "The ID of the resource",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Habit updated",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            ref: "#/components/schemas/HabitSchema",
+                            type: 'object'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Resource not found"
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation error"
+            )
+        ]
+    )]
+    public function update(UpdateHabitRequest $request, $id): JsonResponse
+    {
+        try {
+            $updated = $this->habitService->update($request->validated(), $id);
+            if (!$updated) {
+                return response()->json(['message' => 'Resource not found'], 404);
+            }
+            $habit = $this->habitService->findById($id);
+            return response()->json([
+                'data' => new HabitResource($habit),
+            ]);
+        } catch (\Exception $e) {
+            Log::error(__METHOD__ . '->' . $e->getMessage());
+            return response()->json(['message' => 'Bad request'], 400);
+        }
+    }
+
+
+    #[OA\Delete(
+        path: "/api/v1/habits/{id}",
+        summary: "Delete habit by ID",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Habits"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -191,88 +263,17 @@ class GoalController extends Controller
             ),
         ]
     )]
-    public function delete($id): JsonResponse
+    public function delete($id)
     {
         try {
-            $deleted = $this->goalService->delete($id);
+            $deleted = $this->habitService->delete($id);
             if (!$deleted) {
                 return response()->json(['message' => 'Resource not found'], 404);
             }
-            return response()->json(['message' => 'Goal deleted']);
+            return response()->json(['message' => 'Habit deleted']);
         }catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json(['message' => 'Bad request'], 400);
         }
-    }
-
-
-    #[OA\Put(
-        path: "/api/v1/goals/{id}",
-        summary: "Update goal by ID",
-        security: [
-            ['bearerAuth' => []]
-        ],
-        requestBody: new OA\RequestBody(
-            content: new OA\JsonContent(
-                required: [
-                    'name',
-                    'type',
-                ],
-                properties: [
-                    new OA\Property(property: 'title', type: 'string'),
-                    new OA\Property(property: 'details', type: 'string', nullable: true),
-                ],
-                type: 'object'
-            )
-        ),
-        tags: ["Goals"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                description: "The ID of the resource",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            ),
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Goal updated",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(
-                            property: 'data',
-                            ref: "#/components/schemas/GoalSchema",
-                            type: 'object'
-                        )
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 404,
-                description: "Resource not found"
-            ),
-            new OA\Response(
-                response: 400,
-                description: "Bad request"
-            ),
-            new OA\Response(
-                response: 422,
-                description: "Validation error"
-            )
-        ]
-    )]
-
-    public function update(UpdateGoalRequest $request, $id): JsonResponse
-    {
-        $updated = $this->goalService->update($request->validated(), $id);
-        if (!$updated) {
-            return response()->json(['message' => 'Resource not found'], 404);
-        }
-        $goal = $this->goalService->find($id);
-        return response()->json([
-            'data' => new GoalResource($goal),
-        ]);
     }
 }
