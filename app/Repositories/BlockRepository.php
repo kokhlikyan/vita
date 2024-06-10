@@ -18,14 +18,14 @@ class BlockRepository implements BlockRepositoryInterface
         return Block::query()->create($data);
     }
 
-    public function update(array $data, $id)
+    public function update(array $data, $id): bool
     {
-        // TODO: Implement update() method.
+        return Block::query()->find($id)->update($data);
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
-        // TODO: Implement delete() method.
+        return Block::destroy($id);
     }
 
     public function find($id)

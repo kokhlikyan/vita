@@ -146,6 +146,23 @@ return [
              * By default the spec will be in version 3.0.0
              */
             'open_api_spec_version' => env('L5_SWAGGER_OPEN_API_SPEC_VERSION', \L5Swagger\Generator::OPEN_API_DEFAULT_SPEC_VERSION),
+            'responses' => [
+                // Default response description
+                'description' => 'Response description',
+            ],
+            'parameters' => [
+                // Global headers configuration
+                [
+                    'name' => 'Accept',
+                    'in' => 'header',
+                    'required' => true,
+                    'description' => 'Accept header',
+                    'schema' => [
+                        'type' => 'string',
+                        'default' => 'application/json',
+                    ],
+                ],
+            ]
         ],
 
         /*

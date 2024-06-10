@@ -30,4 +30,22 @@ class BlockService
     {
         return $this->blockRepository->findOwn($id, auth()->id());
     }
+
+    public function delete(int $id): bool
+    {
+        $block = $this->findOwn($id);
+        if (!$block) {
+            return false;
+        }
+        return $this->blockRepository->delete($id);
+    }
+
+    public function update(array $data, int $id): bool
+    {
+        $block = $this->findOwn($id);
+        if (!$block) {
+            return false;
+        }
+        return $this->blockRepository->update($data, $id);
+    }
 }
