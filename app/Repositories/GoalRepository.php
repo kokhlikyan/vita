@@ -16,9 +16,9 @@ class GoalRepository implements  GoalRepositoryInterface
         return Goal::query()->create($data);
     }
 
-    public function update(array $data, $id)
+    public function update(array $data, $id): bool
     {
-        return Goal::where('id', $id)->update($data);
+        return Goal::query()->find($id)->update($data);
     }
 
     public function delete($id)
@@ -33,6 +33,6 @@ class GoalRepository implements  GoalRepositoryInterface
 
     public function findOwn($id, $user_id)
     {
-        return Goal::where('id', $id)->where('user_id', $user_id)->first();
+        return Goal::query()->where('user_id', $user_id)->find($id);
     }
 }

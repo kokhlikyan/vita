@@ -10,6 +10,11 @@ class Goal extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public static function where(string $string, $id)
+    {
+    }
+
     /**
      * Get the attributes that should be cast.
      *

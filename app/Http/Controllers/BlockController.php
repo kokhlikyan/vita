@@ -194,12 +194,11 @@ class BlockController extends Controller
     )]
     public function delete($id): JsonResponse
     {
-        $block = $this->blockService->find($id);
-        if ($block === null) {
+        $deleted = $this->blockService->delete($id);
+        if (!$deleted) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
-        $block->delete();
-        return response()->json(['message' => 'Resource deleted'], 200);
+        return response()->json(['message' => 'Resource deleted']);
     }
 
 
@@ -269,20 +268,13 @@ class BlockController extends Controller
     )]
     public function update(UpdateBlockRequest $request, $id): JsonResponse
     {
-        $block = $this->blockService->findOwn($id);
-        if ($block === null) {
+        $updated = $this->blockService->update($request->validated(), $id);
+        if (!$updated) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
-
-        try {
-            $data = $request->validated();
-            $block->update($data);
-            return response()->json([
-                'data' => new BlockResource($block),
-            ]);
-        } catch (\Exception $e) {
-            Log::error(__METHOD__ . '->' . $e->getMessage());
-            return response()->json(['message' => 'Bad request'], 400);
-        }
+        $block = $this->blockService->find($id);
+        return response()->json([
+            'data' => new BlockResource($block),
+        ]);
     }
 }
