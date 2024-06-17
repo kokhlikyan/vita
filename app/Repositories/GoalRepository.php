@@ -3,16 +3,18 @@
 namespace App\Repositories;
 use App\Models\Goal;
 use App\Repositories\Interfaces\GoalRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class GoalRepository implements  GoalRepositoryInterface
 {
-    public function all(): Collection
+    public function all(int $user_id): Collection
     {
-        return Goal::all();
+        return Goal::query()->where('user_id', $user_id)->get();
     }
 
-    public function create(array $data)
+    public function create(array $data): Model|Builder
     {
         return Goal::query()->create($data);
     }
@@ -22,18 +24,14 @@ class GoalRepository implements  GoalRepositoryInterface
         return Goal::query()->find($id)->update($data);
     }
 
-    public function delete($id)
+    public function delete($id): int
     {
         return Goal::destroy($id);
     }
 
-    public function find($id)
-    {
-        return Goal::find($id);
-    }
-
-    public function findOwn($id, $user_id)
+    public function find($id, $user_id): Model|Collection|Builder|null
     {
         return Goal::query()->where('user_id', $user_id)->find($id);
     }
+
 }

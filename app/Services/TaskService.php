@@ -20,12 +20,12 @@ class TaskService
 
     public function all()
     {
-        return $this->taskRepository->all();
+        return $this->taskRepository->all(auth()->id());
     }
 
     public function findById($id)
     {
-        return $this->taskRepository->find($id);
+        return $this->taskRepository->find($id, auth()->id());
     }
 
     public function create(array $data)
@@ -67,7 +67,7 @@ class TaskService
 
     public function delete($id): bool
     {
-        $task = $this->taskRepository->findOwn($id, auth()->user()->id);
+        $task = $this->taskRepository->find($id, auth()->user()->id);
         if (!$task) {
             return false;
         }

@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\BlockRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class BlockService
+readonly class BlockService
 {
     public function __construct(private BlockRepositoryInterface $blockRepository)
     {
@@ -12,12 +14,12 @@ class BlockService
 
     public function all()
     {
-        return $this->blockRepository->all();
+        return $this->blockRepository->all(auth()->id());
     }
 
-    public function find(int $id)
+    public function find(int $id): Model|Builder|null
     {
-        return $this->blockRepository->find($id);
+        return $this->blockRepository->find($id, auth()->id());
     }
 
     public function create(array $data)
@@ -26,14 +28,9 @@ class BlockService
         return $this->find($newBlock->id);
     }
 
-    public function findOwn($id)
-    {
-        return $this->blockRepository->findOwn($id, auth()->id());
-    }
-
     public function delete(int $id): bool
     {
-        $block = $this->findOwn($id);
+        $block = $this->find($id);
         if (!$block) {
             return false;
         }
@@ -42,7 +39,7 @@ class BlockService
 
     public function update(array $data, int $id): bool
     {
-        $block = $this->findOwn($id);
+        $block = $this->find($id);
         if (!$block) {
             return false;
         }
