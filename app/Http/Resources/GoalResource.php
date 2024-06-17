@@ -18,6 +18,7 @@ class GoalResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'details' => $this->details,
+            'tasks' => TaskResource::collection($this->tasks),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

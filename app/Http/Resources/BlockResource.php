@@ -22,6 +22,7 @@ class BlockResource extends JsonResource
             'purpose' => $this->purpose,
             'type' => $this->type,
             'color' => $this->color,
+            'tasks' => TaskResource::collection($this->tasks),
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'start_time' => $this->start_time,

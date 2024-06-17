@@ -21,6 +21,10 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
+            property: 'tasks',
+            ref: TaskSchema::class
+        ),
+        new OA\Property(
             property: 'created_at',
             type: 'datetime',
         ),
