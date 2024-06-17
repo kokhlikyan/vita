@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class TaskRepository implements TaskRepositoryInterface
 {
 
-    public function all(): Collection|array
+    public function all(int $user_id): Collection|array
     {
-        return Task::query()->get();
+        return Task::query()->where('user_id', $user_id)->get();
     }
 
     public function create(array $data): Model|Builder
@@ -30,12 +30,7 @@ class TaskRepository implements TaskRepositoryInterface
         // TODO: Implement delete() method.
     }
 
-    public function find($id): Model|null
-    {
-        return Task::query()->find($id);
-    }
-
-    public function findOwn($id, $user_id): Model|Collection|Builder|array|null
+    public function find($id, $user_id): Model|Collection|Builder|array|null
     {
         return Task::query()->where('user_id', $user_id)->find($id);
     }

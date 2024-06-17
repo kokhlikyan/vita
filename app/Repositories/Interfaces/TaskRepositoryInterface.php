@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 interface TaskRepositoryInterface
 {
-    public function all();
+    public function all(int $user_id);
 
     public function create(array $data);
 
@@ -12,7 +12,6 @@ interface TaskRepositoryInterface
 
     public function delete($id);
 
-    public function find($id);
+    public function find($id, $user_id);
 
-    public function findOwn($id, $user_id);
 }

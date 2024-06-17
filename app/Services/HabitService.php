@@ -4,20 +4,20 @@ namespace App\Services;
 
 use App\Repositories\Interfaces\HabitRepositoryInterface;
 
-class HabitService
+readonly class HabitService
 {
-    public function __construct(private readonly HabitRepositoryInterface $habitRepository)
+    public function __construct(private HabitRepositoryInterface $habitRepository)
     {
     }
 
     public function all()
     {
-        return $this->habitRepository->all();
+        return $this->habitRepository->all(auth()->id());
     }
 
     public function findById($id)
     {
-        return $this->habitRepository->find($id);
+        return $this->habitRepository->find($id, auth()->id());
     }
 
     public function create(array $data)
@@ -27,7 +27,7 @@ class HabitService
 
     public function update(array $data, $id): bool
     {
-        $habit = $this->habitRepository->findOwn($id, auth()->id());
+        $habit = $this->habitRepository->find($id, auth()->id());
         if (!$habit) {
             return false;
         }
@@ -36,7 +36,7 @@ class HabitService
 
     public function delete($id): bool
     {
-        $habit = $this->habitRepository->findOwn($id, auth()->id());
+        $habit = $this->habitRepository->find($id, auth()->id());
         if (!$habit) {
             return false;
         }

@@ -4,13 +4,16 @@ namespace App\Repositories;
 
 use App\Models\Block;
 use App\Repositories\Interfaces\BlockRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 class BlockRepository implements BlockRepositoryInterface
 {
 
-    public function all(): Collection
+    public function all(int $user_id): Collection
     {
-        return Block::all();
+        return Block::query()->where('user_id', $user_id)->get();
     }
 
     public function create(array $data): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
@@ -28,12 +31,9 @@ class BlockRepository implements BlockRepositoryInterface
         return Block::destroy($id);
     }
 
-    public function find($id)
+    public function find($id, $user_id): Model|Collection|Builder|array|null
     {
-        return Block::query()->find($id);
+        return Block::query()->where('user_id', $user_id)->find($id);
     }
-    public function findOwn($id, $user_id)
-    {
-        return Block::query()->where('id', $id)->where('user_id', $user_id)->first();
-    }
+
 }
