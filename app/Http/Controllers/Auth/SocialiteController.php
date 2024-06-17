@@ -174,14 +174,17 @@ class SocialiteController extends Controller
     private function createOrFind($user, $provider): JsonResponse
     {
         try {
+            $first_name = explode(' ', $user->getName())[0];
+            $last_name = explode(' ', $user->getName())[1] ?? null;
             $userCreated = User::query()->firstOrCreate(
                 [
-                    'email' => $user->getEmail()
+                    'email' => $user->getEmail(),
+
                 ],
                 [
                     'email_verified_at' => now(),
-                    'name' => $user->getName(),
-                    'status' => true,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
                 ]
             );
 
