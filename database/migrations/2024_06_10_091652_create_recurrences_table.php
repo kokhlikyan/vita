@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('recurrences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
-            $table->enum('type', array_column(RepeatTypes::cases(), 'value'));
+            $table->enum('recurrence_type', array_column(RepeatTypes::cases(), 'value'));
             $table->integer('interval')->default(1);
             $table->integer('day_of_week')->nullable();
             $table->integer('day_of_month')->nullable();
             $table->integer('month_of_year')->nullable();
-            $table->string('end_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

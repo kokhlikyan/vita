@@ -5,7 +5,7 @@ namespace App\Schemas;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: "BlockSchema",
+    schema: "TaskSchema",
     properties: [
         new OA\Property(
             property: 'id',
@@ -13,43 +13,30 @@ use OpenApi\Attributes as OA;
             example: 1
         ),
         new OA\Property(
-            property: 'name',
+            property: 'title',
             type: 'string',
         ),
         new OA\Property(
-            property: 'purpose',
+            property: 'description',
             type: 'string',
         ),
         new OA\Property(
-            property: 'type',
-            description: 'Type of the block should be one of the following: temporary, permanent, completed',
-            type: 'string',
+            property: 'completed',
+            type: 'boolean',
         ),
         new OA\Property(
-            property: 'color',
-            type: 'string',
+            property: 'all_day',
+            type: 'boolean',
         ),
         new OA\Property(
             property: 'start_date',
-            type: 'datetime',
-            nullable: true
+            type: 'string',
+            format: 'date',
         ),
         new OA\Property(
             property: 'end_date',
-            type: 'datetime',
-            nullable: true
-        ),
-        new OA\Property(
-            property: 'start_time',
             type: 'string',
-            format: 'time',
-            example: '12:00:00'
-        ),
-        new OA\Property(
-            property: 'end_time',
-            type: 'string',
-            format: 'time',
-            example: '12:00:00'
+            format: 'date',
         ),
         new OA\Property(
             property: 'created_at',
@@ -58,9 +45,13 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'updated_at',
             type: 'datetime',
+        ),
+        new OA\Property(
+            property: 'recurrence',
+            ref: RecurrenceSchema::class
         )
     ]
+
 )]
-class BlockSchema
-{
-}
+class TaskSchema
+{}

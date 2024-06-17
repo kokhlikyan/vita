@@ -936,6 +936,237 @@
                     }
                 ]
             }
+        },
+        "/api/v1/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get all tasks",
+                "operationId": "1adfc7d9e566ea6e76d6344bfb0739f4",
+                "responses": {
+                    "200": {
+                        "description": "Tasks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskSchema"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "operationId": "30abc4979acc22c17b16032f97e44513",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "block_id",
+                                    "goal_id",
+                                    "habit_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Task title"
+                                    },
+                                    "details": {
+                                        "type": "string",
+                                        "example": "Task details"
+                                    },
+                                    "block_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "goal_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "habit_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "completed": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "all_day": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2022-06-10"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Task created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TaskSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tasks/{id}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Find resource by ID",
+                "operationId": "819042b33a352f9868230ffd7de84923",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the resource",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TaskSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Delete task by ID",
+                "operationId": "ce77bb2a7ef9bf3105323544da7088ee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the resource",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tasks/{id}/completed": {
+            "patch": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Mark task as completed or uncompleted",
+                "operationId": "d5eb611889383f606e62404514827132",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the resource",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resource updated"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -961,35 +1192,31 @@
                     },
                     "start_date": {
                         "type": "string",
-                        "format": "date",
-                        "example": "05.06.2024",
+                        "format": "date-time",
                         "nullable": true
                     },
                     "end_date": {
                         "type": "string",
-                        "format": "date",
-                        "example": "05.06.2024",
+                        "format": "date-time",
                         "nullable": true
                     },
                     "start_time": {
                         "type": "string",
                         "format": "time",
-                        "example": "12:00"
+                        "example": "12:00:00"
                     },
                     "end_time": {
                         "type": "string",
                         "format": "time",
-                        "example": "12:00"
+                        "example": "12:00:00"
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -1008,13 +1235,11 @@
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -1033,13 +1258,91 @@
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "05.06.2024 00:00:00"
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "RecurrenceSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "task_id": {
+                        "type": "integer"
+                    },
+                    "recurrence_type": {
+                        "type": "string",
+                        "example": "daily, weekly, monthly"
+                    },
+                    "interval": {
+                        "type": "integer"
+                    },
+                    "day_of_week": {
+                        "type": "integer"
+                    },
+                    "day_of_month": {
+                        "type": "integer"
+                    },
+                    "month_of_year": {
+                        "type": "string"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "TaskSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "all_day": {
+                        "type": "boolean"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "recurrence": {
+                        "$ref": "#/components/schemas/RecurrenceSchema"
                     }
                 },
                 "type": "object"

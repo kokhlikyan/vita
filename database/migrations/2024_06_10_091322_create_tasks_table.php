@@ -20,7 +20,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('details')->nullable();
             $table->boolean('completed')->default(false);
+            $table->boolean('all_day')->default(false);
+            $table->date('start_date')->default(now());
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
