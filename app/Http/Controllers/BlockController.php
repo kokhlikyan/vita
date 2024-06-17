@@ -154,7 +154,6 @@ class BlockController extends Controller
                 'user_id' => auth()->user()->id,
                 ...$request->validated()
             ];
-
             $block = $this->blockService->create($data);
             return response()->json([
                 'data' => new BlockResource($block),

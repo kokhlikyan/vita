@@ -22,15 +22,11 @@ use OpenApi\Attributes as OA;
         ),
         new OA\Property(
             property: 'created_at',
-            type: 'string',
-            format: 'date-time',
-            example: '05.06.2024 00:00:00',
+            type: 'datetime',
         ),
         new OA\Property(
             property: 'updated_at',
-            type: 'string',
-            format: 'date-time',
-            example: '05.06.2024 00:00:00',
+            type: 'datetime',
         )
     ]
 )]

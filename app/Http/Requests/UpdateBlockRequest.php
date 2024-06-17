@@ -3,8 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Enums\BlockTypes;
-use App\Rules\StartBeforeEndDate;
-use App\Rules\StartBeforeEndTime;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -32,15 +30,18 @@ class UpdateBlockRequest extends FormRequest
             'type' => ['string', 'max:255', 'in:' . $blockTypesString],
             'start_date' => [
                 'required_if:type,temporary',
-                'date_format:d.m.Y',
+                'date',
+                'date_format:Y-m-d',
+                'after:now', // 'start_date' must be greater than or equal to today
             ],
             'end_date' => [
                 'required_if:type,temporary',
-                'date_format:d.m.Y',
-                new StartBeforeEndDate,
+                'date',
+                'date_format:Y-m-d',
+                'after:start_date', // 'end_date' must be greater than 'start_date
             ],
             'start_time' => ['date_format:H:i'],
-            'end_time' => ['date_format:H:i',  new StartBeforeEndTime],
+            'end_time' => ['date_format:H:i',  'after:start_time'],
             'color' => ['string', 'max:255'],
         ];
     }

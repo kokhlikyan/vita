@@ -18,12 +18,13 @@ return new class extends Migration
             $table->string('name');
             $table->text('purpose')->nullable();
             $table->enum('type', array_column(BlockTypes::cases(), 'value'));
-            $table->string('start_date')->nullable();
-            $table->string('end_date')->nullable();
-            $table->string('start_time')->nullable();
-            $table->string('end_time')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->string('color')->default('#4B5459');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

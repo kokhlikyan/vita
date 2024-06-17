@@ -26,8 +26,8 @@ class BlockResource extends JsonResource
             'end_date' => $this->end_date,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
-            'created_at' => $this->created_at->format('d.m.Y H:i'),
-            'updated_at' => $this->updated_at->format('d.m.Y H:i'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

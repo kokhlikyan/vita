@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Block extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
     /**
@@ -15,11 +17,10 @@ class Block extends Model
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+
+    public function tasks(): HasMany
     {
-        return [
-            'created_at' => 'datetime:d.m.Y H:i',
-            'updated_at' => 'datetime:d.m.Y H:i',
-        ];
+        return $this->hasMany(Task::class);
     }
+
 }

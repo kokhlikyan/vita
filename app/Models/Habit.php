@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Habit extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
     /**
@@ -18,8 +19,6 @@ class Habit extends Model
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime:d.m.Y H:i',
-            'updated_at' => 'datetime:d.m.Y H:i',
         ];
     }
 }

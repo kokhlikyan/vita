@@ -18,8 +18,8 @@ class HabitResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'details' => $this->details,
-            'created_at' => $this->created_at->format('d.m.Y H:i'),
-            'updated_at' => $this->updated_at->format('d.m.Y H:i'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
