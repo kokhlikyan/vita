@@ -30,6 +30,10 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
+            property: 'tasks',
+            ref: TaskSchema::class
+        ),
+        new OA\Property(
             property: 'start_date',
             type: 'datetime',
             nullable: true

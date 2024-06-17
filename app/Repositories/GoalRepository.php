@@ -3,10 +3,11 @@
 namespace App\Repositories;
 use App\Models\Goal;
 use App\Repositories\Interfaces\GoalRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 class GoalRepository implements  GoalRepositoryInterface
 {
-    public function all()
+    public function all(): Collection
     {
         return Goal::all();
     }

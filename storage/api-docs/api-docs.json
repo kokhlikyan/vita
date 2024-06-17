@@ -1190,6 +1190,9 @@
                     "color": {
                         "type": "string"
                     },
+                    "tasks": {
+                        "$ref": "#/components/schemas/TaskSchema"
+                    },
                     "start_date": {
                         "type": "string",
                         "format": "date-time",
@@ -1233,6 +1236,9 @@
                     "details": {
                         "type": "string"
                     },
+                    "tasks": {
+                        "$ref": "#/components/schemas/TaskSchema"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
@@ -1255,6 +1261,9 @@
                     },
                     "details": {
                         "type": "string"
+                    },
+                    "tasks": {
+                        "$ref": "#/components/schemas/TaskSchema"
                     },
                     "created_at": {
                         "type": "string",
