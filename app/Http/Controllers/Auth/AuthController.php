@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailAuthRequest;
 use App\Http\Requests\EmailVerifyRequest;
 use App\Http\Requests\UpdateUserInfoRequest;
+use App\Http\Resources\UserResource;
 use App\Schemas\UserSchema;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -108,7 +109,7 @@ class AuthController extends Controller
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(
-                            property: 'status',
+                            property: 'is_verified',
                             type: 'boolean',
                             example: true
                         ),
@@ -142,7 +143,7 @@ class AuthController extends Controller
             $token = $user->createToken($user->email)->plainTextToken;
 
             return response()->json([
-                'status' => true,
+                'is_verified' => $user->first_name && $user->last_name,
                 'token' => $token,
             ], 200, ['Access-Token' => $token]);
         }
@@ -222,6 +223,34 @@ class AuthController extends Controller
             Log::error(__METHOD__ . '->' . $exception->getMessage());
             return response()->json(['message' => 'Failed to update user information'], 400);
         }
+    }
+
+
+    #[OA\Get(
+        path: "/api/v1/auth/user",
+        summary: "Get user information",
+        security: [
+            ['Bearer' => []]
+        ],
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "User information",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            ref: UserSchema::class
+                        ),
+                    ]
+                )
+            ),
+        ]
+    )]
+    public function getUser(): JsonResponse
+    {
+        return response()->json(new UserResource(auth()->user()));
     }
 
 }

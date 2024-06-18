@@ -13,6 +13,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/email/verify', 'verifyCode')
             ->withoutMiddleware('auth:sanctum');
             Route::put('/update', 'updateInfo');
+            Route::get('/user', 'getUser');
         });
         Route::middleware(ProviderMiddleware::class)->controller(SocialiteController::class)->group(function () {
             Route::get('/{provider}', 'redirectToProvider');
