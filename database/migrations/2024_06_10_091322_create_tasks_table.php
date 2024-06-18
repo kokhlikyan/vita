@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('details')->nullable();
             $table->boolean('completed')->default(false);
             $table->boolean('all_day')->default(false);
-            $table->date('start_date')->default(now());
+            $table->timestamp('start_date')->default(now());
             $table->timestamps();
             $table->softDeletes();
         });

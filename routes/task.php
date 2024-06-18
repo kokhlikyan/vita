@@ -10,6 +10,7 @@ Route::prefix('v1')->group(function () {
         ->controller(TaskController::class)
         ->group(function () {
             Route::get('/', 'all');
+            Route::get('/list', 'list');
             Route::get('/{id}', 'findById');
             Route::post('/', 'create');
             Route::delete('/{id}', 'delete');
