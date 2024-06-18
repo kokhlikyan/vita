@@ -9,6 +9,10 @@
         {
             "url": "http://localhost:8000",
             "description": "local server"
+        },
+        {
+            "url": "https://8009.freelancedeveloper.site",
+            "description": "local server"
         }
     ],
     "paths": {
@@ -172,9 +176,9 @@
                                         "type": "string",
                                         "example": "Doe"
                                     },
-                                    "email": {
+                                    "phone": {
                                         "type": "string",
-                                        "example": "test@mail.ru"
+                                        "example": "+374 77 777777"
                                     }
                                 },
                                 "type": "object"

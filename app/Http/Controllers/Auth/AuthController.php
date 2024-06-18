@@ -173,9 +173,9 @@ class AuthController extends Controller
                         example: 'Doe'
                     ),
                     new OA\Property(
-                        property: 'email',
+                        property: 'phone',
                         type: 'string',
-                        example: 'test@mail.ru'
+                        example: '+374 77 777777'
                     ),
                 ]
             )
