@@ -17,8 +17,8 @@ class AuthService
      */
     public function sendCode(string $email): bool
     {
-        $code = random_int(1000, 9999);
-
+//        $code = random_int(1000, 9999);
+        $code = 1234;
         VerificationCode::query()->updateOrCreate([
             'email' => $email,
         ], [

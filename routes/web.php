@@ -31,3 +31,11 @@ Route::get('clear-cache', function () {
     Artisan::call('cache:clear');
     return 'cache cleared';
 });
+
+
+Route::get('publish-swagger-assets', function () {
+    Artisan::call('vendor:publish', [
+        '--provider' => 'L5Swagger\L5SwaggerServiceProvider'
+    ]);
+    return 'Swagger assets published';
+});
