@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('day_of_week')->nullable();
             $table->integer('day_of_month')->nullable();
             $table->integer('month_of_year')->nullable();
-            $table->date('end_date')->nullable();
-            $table->json('exceptions')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->json('exceptions')->default([]);
             $table->timestamps();
             $table->softDeletes();
         });

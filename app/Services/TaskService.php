@@ -67,11 +67,11 @@ class TaskService
 
     public function delete($id): bool
     {
-        $task = $this->taskRepository->find($id, auth()->user()->id);
+        $task = $this->taskRepository->find($id, auth()->id());
         if (!$task) {
             return false;
         }
-        return $task->delete($id);
+        return $task->taskRepository->delete($id);
     }
 
     public function update(array $data, $id)
@@ -101,4 +101,12 @@ class TaskService
     {
         return $this->taskRepository->makeCompleted($id, auth()->user()->id);
     }
+
+    public function list($params)
+    {
+        $sortDayCount = (int)($params['sort'] ?? 1);
+        return $this->taskRepository->list($sortDayCount, auth()->id());
+    }
+
+
 }

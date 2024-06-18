@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\TaskDTO;
 use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\TaskListQueryParamsRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\User;
 use App\Services\TaskService;
@@ -293,6 +294,20 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Bad request'
+            ], 400);
+        }
+    }
+
+    public function list(TaskListQueryParamsRequest $request): JsonResponse
+    {
+        try {
+            $tasks = $this->taskService->list($request->validated());
+            return response()->json([
+                'data' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
             ], 400);
         }
     }

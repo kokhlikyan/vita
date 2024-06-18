@@ -33,8 +33,8 @@ class CreateTaskRequest extends FormRequest
             'details' => ['string'],
             'all_day' => ['boolean'],
             'recurrence_type' => ['string', Rule::in(array_column(RepeatTypes::cases(), 'value'))],
-            'start_date' => ['date', 'after:now'],
-            'end_date' => ['date', 'after:start_date'],
+            'start_date' => ['date', 'after_or_equal:today'],
+            'end_date' => ['date', 'after_or_equal:start_date'],
 
         ];
     }
