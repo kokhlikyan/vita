@@ -118,7 +118,7 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "is_verified": {
                                             "type": "boolean",
                                             "example": true
                                         },
@@ -211,6 +211,37 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Failed to update user information"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/user": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get user information",
+                "operationId": "ee0449826f1df26f40c84b7b86938678",
+                "responses": {
+                    "200": {
+                        "description": "User information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSchema"
                                         }
                                     },
                                     "type": "object"

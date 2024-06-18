@@ -17,4 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
+    ->withCommands([
+        \App\Console\Commands\RemoveInactiveUsers::class,
+    ])
     ->create();
