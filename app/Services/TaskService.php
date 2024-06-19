@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTO\RecurrenceDTO;
 use App\DTO\TaskDTO;
+use App\Models\Task;
 use App\Repositories\Interfaces\RecurrenceRepositoryInterface;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Carbon\Carbon;
@@ -106,7 +107,56 @@ class TaskService
     {
         $sortDayCount = (int)($params['sort'] ?? 1);
         return $this->taskRepository->list($sortDayCount, auth()->id());
+//        $data = [];
+//        foreach ($tasks as $task) {
+//            $data[] = $this->generateRecurringTasks($task, Carbon::parse($task->start_date), Carbon::parse($task->end_date));
+//        }
+//        return $tasks;
     }
+
+
+//    public function generateRecurringTasks(Task $task, Carbon $startDate, Carbon $endDate)
+//    {
+//        $tasks = [];
+//        $currentDate = $startDate->copy();
+//        if ($task->recurrence_type == 'daily') {
+//            while ($currentDate->lessThanOrEqualTo($endDate)) {
+//                $tasks[] = [
+//                    'title' => $task->title,
+//                    'details' => $task->details,
+//                    'start_time' => $currentDate->copy()->toDateTimeString(),
+//                    'end_time' => $currentDate->copy()->toDateTimeString()
+//                ];
+//                $currentDate->addDays($task->interval);
+//            }
+//        } elseif ($task->recurrence_type == 'weekly') {
+//            for ($i = 1; $i <= $task->interval; $i++){
+//                $tasks[] = [
+//                    'title' => $task->title,
+//                    'details' => $task->details,
+//                    'interval_id' => $i, // 'interval_id' => 'week 1', 'week 2', 'week 3', 'week 4
+//                    'start_time' => $currentDate->copy()->addWeeks($i)->toDateTimeString(),
+//                    'end_time' => $currentDate->copy()->toDateTimeString()
+//                ];
+//            }
+//        } elseif ($task->recurrence_type == 'monthly') {
+//            while ($currentDate->lessThanOrEqualTo($endDate)) {
+//                if ($currentDate->day == $task->day_of_month) {
+//                    $tasks[] = [
+//                        'title' => $task->title,
+//                        'details' => $task->details,
+//                        'start_time' => $currentDate->copy()->toDateTimeString(),
+//                        'end_time' => $currentDate->copy()->toDateTimeString()
+//                    ];
+//                    $currentDate->addMonths($task->interval);
+//                } else {
+//                    $currentDate->addDay();
+//                }
+//            }
+//        }
+//
+//        return $tasks;
+//    }
 
 
 }
