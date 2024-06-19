@@ -14,6 +14,7 @@ Route::prefix('v1')->group(function () {
             ->withoutMiddleware('auth:sanctum');
             Route::put('/update', 'updateInfo');
             Route::get('/user', 'getUser');
+            Route::post('/logout', 'logout');
         });
         Route::middleware(ProviderMiddleware::class)->controller(SocialiteController::class)->group(function () {
             Route::get('/{provider}', 'redirectToProvider');

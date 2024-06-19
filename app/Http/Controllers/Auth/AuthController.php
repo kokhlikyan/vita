@@ -253,4 +253,35 @@ class AuthController extends Controller
         return response()->json(new UserResource(auth()->user()));
     }
 
+
+    #[OA\Post(
+        path: "/api/v1/auth/logout",
+        summary: "Logout user",
+        security: [
+            ['Bearer' => []]
+        ],
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Logged out successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Logged out successfully'
+                        ),
+                    ]
+                )
+            ),
+        ]
+    )]
+    public function logout()
+    {
+        $user = auth()->user();
+        $user->tokens()->delete();
+        return response()->json(['message' => 'Logged out successfully']);
+    }
+
 }
