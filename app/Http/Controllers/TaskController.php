@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\TaskDTO;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\TaskListQueryParamsRequest;
+use App\Http\Resources\BlockResource;
 use App\Http\Resources\TaskResource;
 use App\Models\User;
 use App\Services\TaskService;
@@ -298,12 +299,65 @@ class TaskController extends Controller
         }
     }
 
+
+    #[OA\Get(
+        path: "/api/v1/tasks/list",
+        summary: "List tasks",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "sort",
+                description: "Sort by day count",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tasks found",
+                content: [
+                    new OA\JsonContent(
+                        properties: [
+                            new OA\Property(
+                                property: 'data',
+                                properties: [
+                                    new OA\Property(
+                                        property: 'tasks',
+                                        type: 'array',
+                                        items: new OA\Items(ref: "#/components/schemas/TaskSchema")
+                                    ),
+                                    new OA\Property(
+                                        property: 'blocks',
+                                        type: 'array',
+                                        items: new OA\Items(ref: "#/components/schemas/BlockSchema")
+                                    )
+                                ],
+                                type: 'object'
+                            )
+                        ]
+                    )
+                ]
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+        ]
+    )]
     public function list(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->list($request->validated());
+            $data = $this->taskService->list($request->validated());
             return response()->json([
-                'data' => $tasks
+                'data' => [
+                    'tasks' => TaskResource::collection($data['tasks']),
+                    'blocks' => BlockResource::collection($data['blocks'])
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
