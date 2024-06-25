@@ -790,6 +790,39 @@
                                     "details": {
                                         "type": "string",
                                         "nullable": true
+                                    },
+                                    "tasks": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Task title"
+                                                },
+                                                "details": {
+                                                    "type": "string",
+                                                    "example": "Task details"
+                                                },
+                                                "block_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "completed": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "all_day": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2022-06-10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1028,6 +1061,39 @@
                                     "details": {
                                         "type": "string",
                                         "nullable": true
+                                    },
+                                    "tasks": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Task title"
+                                                },
+                                                "details": {
+                                                    "type": "string",
+                                                    "example": "Task details"
+                                                },
+                                                "block_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "completed": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "all_day": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2022-06-10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1436,6 +1502,65 @@
                     },
                     "404": {
                         "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tasks/list": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "List tasks",
+                "operationId": "c442a1da2eb0a17f5c27fe27b09efe19",
+                "parameters": [
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by day count",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "tasks": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/TaskSchema"
+                                                    }
+                                                },
+                                                "blocks": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/BlockSchema"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
                     }
                 },
                 "security": [

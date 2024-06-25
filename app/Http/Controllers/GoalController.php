@@ -6,6 +6,7 @@ use App\Http\Requests\CreateGoalRequest;
 use App\Http\Requests\UpdateGoalRequest;
 use App\Http\Resources\GoalResource;
 use App\Services\GoalService;
+use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,7 +16,10 @@ use OpenApi\Attributes as OA;
 class GoalController extends Controller
 {
 
-    public function __construct(private readonly GoalService $goalService)
+    public function __construct(
+        private readonly GoalService $goalService,
+        private readonly TaskService $taskService
+    )
     {
     }
 
@@ -114,6 +118,46 @@ class GoalController extends Controller
                 properties: [
                     new OA\Property(property: 'title', type: 'string'),
                     new OA\Property(property: 'details', type: 'string', nullable: true),
+                    new OA\Property(
+                        property: 'tasks',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(
+                                    property: 'title',
+                                    type: 'string',
+                                    example: 'Task title'
+                                ),
+                                new OA\Property(
+                                    property: 'details',
+                                    type: 'string',
+                                    example: 'Task details'
+                                ),
+                                new OA\Property(
+                                    property: 'block_id',
+                                    type: 'integer',
+                                    example: 1
+                                ),
+                                new OA\Property(
+                                    property: 'completed',
+                                    type: 'boolean',
+                                    example: false
+                                ),
+                                new OA\Property(
+                                    property: 'all_day',
+                                    type: 'boolean',
+                                    example: false
+                                ),
+                                new OA\Property(
+                                    property: 'start_date',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2022-06-10'
+                                )
+                            ],
+                            type: 'object'
+                        )
+                    ),
                 ],
                 type: 'object'
             )
@@ -144,15 +188,23 @@ class GoalController extends Controller
 
         ]
     )]
-    public function create(CreateGoalRequest $request):JsonResponse
+    public function create(CreateGoalRequest $request): JsonResponse
     {
 
         try {
             $data = [
                 'user_id' => auth()->user()->id,
-                ...$request->validated()
+                'title' => $request->get('title'),
+                'details' => $request->get('details', ''),
             ];
+
             $goal = $this->goalService->create($data);
+            if ($request->has('tasks')) {
+                foreach ($request->get('tasks') as $task) {
+                    $task['goal_id'] = $goal->id;
+                    $this->taskService->create($task);
+                }
+            }
             return response()->json([
                 'data' => new GoalResource($goal),
             ], 201);
@@ -199,7 +251,7 @@ class GoalController extends Controller
                 return response()->json(['message' => 'Resource not found'], 404);
             }
             return response()->json(['message' => 'Goal deleted']);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json(['message' => 'Bad request'], 400);
         }
@@ -263,7 +315,6 @@ class GoalController extends Controller
             )
         ]
     )]
-
     public function update(UpdateGoalRequest $request, $id): JsonResponse
     {
         $updated = $this->goalService->update($request->validated(), $id);
