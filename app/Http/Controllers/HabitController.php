@@ -6,6 +6,7 @@ use App\Http\Requests\CreateHabitRequest;
 use App\Http\Requests\UpdateHabitRequest;
 use App\Http\Resources\HabitResource;
 use App\Services\HabitService;
+use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,7 +16,10 @@ use OpenApi\Attributes as OA;
 
 class HabitController extends Controller
 {
-    public function __construct(private readonly HabitService $habitService)
+    public function __construct(
+        private readonly HabitService $habitService,
+        private readonly TaskService $taskService,
+    )
     {
     }
 
@@ -113,6 +117,47 @@ class HabitController extends Controller
                 properties: [
                     new OA\Property(property: 'title', type: 'string'),
                     new OA\Property(property: 'details', type: 'string', nullable: true),
+                    new OA\Property(
+                        property: 'tasks',
+                        type: 'array',
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(
+                                    property: 'title',
+                                    type: 'string',
+                                    example: 'Task title'
+                                ),
+                                new OA\Property(
+                                    property: 'details',
+                                    type: 'string',
+                                    example: 'Task details'
+                                ),
+                                new OA\Property(
+                                    property: 'block_id',
+                                    type: 'integer',
+                                    example: 1
+                                ),
+                                new OA\Property(
+                                    property: 'completed',
+                                    type: 'boolean',
+                                    example: false
+                                ),
+                                new OA\Property(
+                                    property: 'all_day',
+                                    type: 'boolean',
+                                    example: false
+                                ),
+                                new OA\Property(
+                                    property: 'start_date',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2022-06-10'
+                                )
+                            ],
+                            type: 'object'
+                        )
+                    )
+
                 ],
                 type: 'object'
             )
@@ -148,11 +193,19 @@ class HabitController extends Controller
         try {
             $data = [
                 'user_id' => auth()->user()->id,
-                ...$request->validated()
+                'title' => $request->input('title'),
+                'details' => $request->input('details', ''),
             ];
-            $goal = $this->habitService->create($data);
+            $habit = $this->habitService->create($data);
+            if ($request->has('tasks')) {
+                $tasks = $request->input('tasks');
+                foreach ($tasks as $task) {
+                    $task['habit_id'] = $habit->id;
+                    $this->taskService->create($task);
+                }
+            }
             return response()->json([
-                'data' => new HabitResource($goal),
+                'data' => new HabitResource($habit),
             ], 201);
         } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
@@ -271,7 +324,7 @@ class HabitController extends Controller
                 return response()->json(['message' => 'Resource not found'], 404);
             }
             return response()->json(['message' => 'Habit deleted']);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json(['message' => 'Bad request'], 400);
         }

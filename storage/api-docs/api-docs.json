@@ -790,6 +790,39 @@
                                     "details": {
                                         "type": "string",
                                         "nullable": true
+                                    },
+                                    "tasks": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Task title"
+                                                },
+                                                "details": {
+                                                    "type": "string",
+                                                    "example": "Task details"
+                                                },
+                                                "block_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "completed": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "all_day": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2022-06-10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1028,6 +1061,39 @@
                                     "details": {
                                         "type": "string",
                                         "nullable": true
+                                    },
+                                    "tasks": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Task title"
+                                                },
+                                                "details": {
+                                                    "type": "string",
+                                                    "example": "Task details"
+                                                },
+                                                "block_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "completed": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "all_day": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2022-06-10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
