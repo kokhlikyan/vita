@@ -77,6 +77,10 @@ class TaskService
 
     public function update(array $data, $id)
     {
+        $task = $this->taskRepository->find($id, auth()->id());
+        if (!$task) {
+            return false;
+        }
         return $this->taskRepository->update($data, $id);
     }
 

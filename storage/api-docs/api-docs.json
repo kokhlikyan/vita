@@ -1365,6 +1365,11 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2022-06-10"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2022-06-10"
                                     }
                                 },
                                 "type": "object"
@@ -1432,6 +1437,102 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Update task by ID",
+                "operationId": "2d67628d964268e2b57c176e100ccf23",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the resource",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Task title"
+                                    },
+                                    "details": {
+                                        "type": "string",
+                                        "example": "Task details"
+                                    },
+                                    "block_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "goal_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "habit_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "completed": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "all_day": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2022-06-10"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2022-06-10"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TaskSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
                     },
                     "404": {
                         "description": "Resource not found"

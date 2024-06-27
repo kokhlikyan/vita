@@ -23,9 +23,9 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::query()->create($data);
     }
 
-    public function update(array $data, $id)
+    public function update(array $data, $id): bool|int
     {
-        // TODO: Implement update() method.
+        return Task::query()->find($id)->update($data);
     }
 
     public function delete($id)
