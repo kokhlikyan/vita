@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 class TaskController extends Controller
 {
@@ -176,7 +177,13 @@ class TaskController extends Controller
                         type: 'string',
                         format: 'date',
                         example: '2022-06-10'
-                    )
+                    ),
+                    new OA\Property(
+                        property: 'end_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2022-06-10'
+                    ),
                 ]
             )
         ),
@@ -247,8 +254,117 @@ class TaskController extends Controller
         return response()->json(['message' => 'Resource deleted']);
     }
 
-    public function update(Request $request, $id)
+
+    #[OA\Put(
+        path: "/api/v1/tasks/{id}",
+        summary: "Update task by ID",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                required: [],
+                properties: [
+                    new OA\Property(
+                        property: 'title',
+                        type: 'string',
+                        example: 'Task title'
+                    ),
+                    new OA\Property(
+                        property: 'details',
+                        type: 'string',
+                        example: 'Task details'
+                    ),
+                    new OA\Property(
+                        property: 'block_id',
+                        type: 'integer',
+                        example: 1
+                    ),
+                    new OA\Property(
+                        property: 'goal_id',
+                        type: 'integer',
+                        example: 1
+                    ),
+                    new OA\Property(
+                        property: 'habit_id',
+                        type: 'integer',
+                        example: 1
+                    ),
+                    new OA\Property(
+                        property: 'completed',
+                        type: 'boolean',
+                        example: false
+                    ),
+                    new OA\Property(
+                        property: 'all_day',
+                        type: 'boolean',
+                        example: false
+                    ),
+                    new OA\Property(
+                        property: 'start_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2022-06-10'
+                    ),
+                    new OA\Property(
+                        property: 'end_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2022-06-10'
+                    ),
+                ]
+            )
+        ),
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "The ID of the resource",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Resource updated",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            ref: "#/components/schemas/TaskSchema"
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Resource not found"
+            ),
+        ]
+    )]
+    public function update(Request $request, $id): JsonResponse
     {
+        try {
+            $updated = $this->taskService->update($request->all(), $id);
+            if (!$updated) {
+                return response()->json(['message' => 'Resource not found'], 404);
+            }
+            $task = $this->taskService->findById($id);
+            return response()->json([
+                'data' => new TaskResource($task)
+            ]);
+        }catch (\Exception $e) {
+            Log::error(__METHOD__ . '->' . $e->getMessage());
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        }
 
     }
 
