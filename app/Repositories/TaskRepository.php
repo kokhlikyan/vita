@@ -14,14 +14,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class TaskRepository implements TaskRepositoryInterface
 {
 
-    public function all(int $user_id, $search, $page = 15): LengthAwarePaginator
+    public function all(int $user_id, $search, $page): LengthAwarePaginator
     {
-        return Task::query()
+        $task =  Task::query()
             ->where('user_id', $user_id)
             ->when($search, function ($query) use ($search) {
                 $query->where('title', 'like', "%$search%");
-            })
-            ->paginate($page);
+            });
+        return $task->paginate($page);
     }
 
     public function create(array $data): Model|Builder

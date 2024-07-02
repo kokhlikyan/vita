@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 interface TaskRepositoryInterface
 {
-    public function all(int $user_id, string $search, int $page);
+    public function all(int $user_id, string $search, $page);
 
     public function create(array $data);
 

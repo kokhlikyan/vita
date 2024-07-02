@@ -19,7 +19,7 @@ class TaskService
     {
     }
 
-    public function all(string $search, int $page)
+    public function all(string $search, $page)
     {
         return $this->taskRepository->all(auth()->id(), $search, $page);
     }
