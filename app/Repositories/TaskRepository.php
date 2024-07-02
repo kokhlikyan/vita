@@ -13,9 +13,14 @@ use Illuminate\Database\Eloquent\Model;
 class TaskRepository implements TaskRepositoryInterface
 {
 
-    public function all(int $user_id): Collection|array
+    public function all(int $user_id, $search): Collection|array
     {
-        return Task::query()->where('user_id', $user_id)->get();
+        return Task::query()
+            ->where('user_id', $user_id)
+            ->when($search, function ($query) use ($search) {
+                $query->where('title', 'like', "%$search%");
+            })
+            ->get();
     }
 
     public function create(array $data): Model|Builder

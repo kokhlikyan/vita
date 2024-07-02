@@ -24,6 +24,7 @@ class TaskListQueryParamsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'search' => ['string', 'max:255'],
             'sort' => ['int', 'min:1', 'max:365'],
         ];
     }
