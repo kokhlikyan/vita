@@ -22,6 +22,10 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'settings' => [
+                'goals_color' => $this->settings->goals_color,
+                'habits_color' => $this->settings->habits_color
+            ]
         ];
     }
 }
