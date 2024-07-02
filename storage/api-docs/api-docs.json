@@ -1287,6 +1287,17 @@
                 ],
                 "summary": "Get all tasks",
                 "operationId": "1adfc7d9e566ea6e76d6344bfb0739f4",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by title",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Tasks found",
@@ -1297,7 +1308,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/TaskSchema"
+                                                "$ref": "#/components/schemas/TaskListSchema"
                                             }
                                         }
                                     },
@@ -1819,6 +1830,33 @@
                 },
                 "type": "object"
             },
+            "TaskListSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "type": "string"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "TaskSchema": {
                 "properties": {
                     "id": {
@@ -1828,7 +1866,7 @@
                     "title": {
                         "type": "string"
                     },
-                    "description": {
+                    "details": {
                         "type": "string"
                     },
                     "completed": {
@@ -1838,10 +1876,6 @@
                         "type": "boolean"
                     },
                     "start_date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "end_date": {
                         "type": "string",
                         "format": "date"
                     },

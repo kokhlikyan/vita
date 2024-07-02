@@ -6,6 +6,7 @@ use App\DTO\TaskDTO;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\TaskListQueryParamsRequest;
 use App\Http\Resources\BlockResource;
+use App\Http\Resources\TaskListResource;
 use App\Http\Resources\TaskResource;
 use App\Models\User;
 use App\Services\TaskService;
@@ -31,6 +32,15 @@ class TaskController extends Controller
             ['bearerAuth' => []]
         ],
         tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "search",
+                description: "Search by title",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -41,7 +51,7 @@ class TaskController extends Controller
                             new OA\Property(
                                 property: 'data',
                                 type: 'array',
-                                items: new OA\Items(ref: "#/components/schemas/TaskSchema")
+                                items: new OA\Items(ref: "#/components/schemas/TaskListSchema")
                             )
                         ]
                     )
@@ -53,12 +63,12 @@ class TaskController extends Controller
             ),
         ]
     )]
-    public function all(): JsonResponse
+    public function all(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->all();
+            $tasks = $this->taskService->all($request->input('search', ''));
             return response()->json([
-                'data' => TaskResource::collection($tasks)
+                'data' => TaskListResource::collection($tasks)
             ]);
         } catch (\Exception $e) {
             return response()->json([

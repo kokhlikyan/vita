@@ -5,7 +5,7 @@ namespace App\Schemas;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: "TaskSchema",
+    schema: "TaskListSchema",
     properties: [
         new OA\Property(
             property: 'id',
@@ -21,17 +21,9 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
-            property: 'completed',
-            type: 'boolean',
-        ),
-        new OA\Property(
-            property: 'all_day',
-            type: 'boolean',
-        ),
-        new OA\Property(
             property: 'start_date',
             type: 'string',
-            format: 'date',
+            example: '2024-01-01 00:00:00'
         ),
         new OA\Property(
             property: 'created_at',
@@ -41,12 +33,8 @@ use OpenApi\Attributes as OA;
             property: 'updated_at',
             type: 'datetime',
         ),
-        new OA\Property(
-            property: 'recurrence',
-            ref: RecurrenceSchema::class
-        )
     ]
 
 )]
-class TaskSchema
+class TaskListSchema
 {}
