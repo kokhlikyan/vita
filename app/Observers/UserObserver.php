@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Settings;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class UserObserver
 {
@@ -17,6 +18,7 @@ class UserObserver
             Settings::query()->create([
                 'user_id' => $user->id
             ]);
+            Log::info('Settings created for user with ID: ' . $user->id);
         }
     }
 
