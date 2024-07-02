@@ -25,6 +25,7 @@ class UpdateUserInfoRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:255'],
+            'date_of_birth' => ['date'],
         ];
     }
 }
