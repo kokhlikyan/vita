@@ -23,8 +23,8 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'settings' => [
-                'goals_color' => $this->settings->goals_color ?? null,
-                'habits_color' => $this->settings->habits_color ?? null
+                'goals_color' => $this->settings->goals_color,
+                'habits_color' => $this->settings->habits_color
             ]
         ];
     }
