@@ -6,6 +6,7 @@ use App\DTO\TaskDTO;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\TaskListQueryParamsRequest;
 use App\Http\Resources\BlockResource;
+use App\Http\Resources\PaginatorResource;
 use App\Http\Resources\TaskListResource;
 use App\Http\Resources\TaskResource;
 use App\Models\User;
@@ -40,6 +41,13 @@ class TaskController extends Controller
                 required: false,
                 schema: new OA\Schema(type: "string")
             ),
+            new OA\Parameter(
+                name: 'page',
+                description: 'The number of items to display per page (default 15)',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer')
+            )
         ],
         responses: [
             new OA\Response(
@@ -52,6 +60,10 @@ class TaskController extends Controller
                                 property: 'data',
                                 type: 'array',
                                 items: new OA\Items(ref: "#/components/schemas/TaskListSchema")
+                            ),
+                            new OA\Property(
+                                property: 'pagination',
+                                ref: "#/components/schemas/PaginatorSchema"
                             )
                         ]
                     )
@@ -66,9 +78,13 @@ class TaskController extends Controller
     public function all(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->all($request->input('search', ''));
+            $tasks = $this->taskService->all(
+                $request->input('search', ''),
+                $request->input('page', 15)
+            );
             return response()->json([
-                'data' => TaskListResource::collection($tasks)
+                'data' => TaskListResource::collection($tasks),
+                'pagination' => new PaginatorResource($tasks)
             ]);
         } catch (\Exception $e) {
             return response()->json([
