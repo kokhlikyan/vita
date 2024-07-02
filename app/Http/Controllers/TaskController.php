@@ -78,10 +78,9 @@ class TaskController extends Controller
     public function all(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->all(
-                $request->input('search', ''),
-                $request->input('page', 15)
-            );
+            $search = $request->input('search', '');
+            $page = $request->input('page');
+            $tasks = $this->taskService->all($search, $page);
             return response()->json([
                 'data' => TaskListResource::collection($tasks),
                 'pagination' => new PaginatorResource($tasks)
