@@ -178,6 +178,11 @@ class AuthController extends Controller
                         type: 'string',
                         example: '+374 77 777777'
                     ),
+                    new OA\Property(
+                        property: 'date_of_birth',
+                        type: 'string',
+                        example: '1990-01-01'
+                    )
                 ]
             )
         ),
@@ -214,11 +219,10 @@ class AuthController extends Controller
     {
         try {
             $user = auth()->user();
-            $user->first_name = $request->get('first_name');
-            $user->last_name = $request->get('last_name');
-            $user->phone = $request->get('phone');
+            $user->update($request->validated());
             $user->save();
-            return response()->json(['data' => $user]);
+            $user->refresh();
+            return response()->json(['data' => new UserResource($user)]);
         }catch (\Exception $exception) {
             Log::error(__METHOD__ . '->' . $exception->getMessage());
             return response()->json(['message' => 'Failed to update user information'], 400);

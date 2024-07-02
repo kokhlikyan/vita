@@ -179,6 +179,10 @@
                                     "phone": {
                                         "type": "string",
                                         "example": "+374 77 777777"
+                                    },
+                                    "date_of_birth": {
+                                        "type": "string",
+                                        "example": "1990-01-01"
                                     }
                                 },
                                 "type": "object"
