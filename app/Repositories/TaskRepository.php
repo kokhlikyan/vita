@@ -9,18 +9,19 @@ use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TaskRepository implements TaskRepositoryInterface
 {
 
-    public function all(int $user_id, $search): Collection|array
+    public function all(int $user_id, $search, $page = 15): LengthAwarePaginator
     {
         return Task::query()
             ->where('user_id', $user_id)
             ->when($search, function ($query) use ($search) {
                 $query->where('title', 'like', "%$search%");
             })
-            ->get();
+            ->paginate($page);
     }
 
     public function create(array $data): Model|Builder

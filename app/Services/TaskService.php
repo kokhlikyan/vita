@@ -19,9 +19,9 @@ class TaskService
     {
     }
 
-    public function all(string $search)
+    public function all(string $search, int $page)
     {
-        return $this->taskRepository->all(auth()->id(), $search);
+        return $this->taskRepository->all(auth()->id(), $search, $page);
     }
 
     public function findById($id)

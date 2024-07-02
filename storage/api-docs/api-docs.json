@@ -1296,6 +1296,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The number of items to display per page (default 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -1310,6 +1319,9 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/TaskListSchema"
                                             }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/PaginatorSchema"
                                         }
                                     },
                                     "type": "object"
@@ -1786,6 +1798,44 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatorSchema": {
+                "properties": {
+                    "total": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "count": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "links": {
+                        "properties": {
+                            "next": {
+                                "type": "string",
+                                "example": "http://example.com/api/tasks?page=2"
+                            },
+                            "previous": {
+                                "type": "string",
+                                "example": "https://example.com/api/tasks?page=1"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
