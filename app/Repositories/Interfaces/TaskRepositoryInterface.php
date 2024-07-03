@@ -16,4 +16,6 @@ interface TaskRepositoryInterface
 
     public function list($sortDayCount, $date, $user_id);
 
+    public function filteredTasks($params, $user_id);
+
 }

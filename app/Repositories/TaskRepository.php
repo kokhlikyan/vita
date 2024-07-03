@@ -6,6 +6,7 @@ use App\Enums\TaskListOrderByValues;
 use App\Models\Block;
 use App\Models\Task;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -88,6 +89,27 @@ class TaskRepository implements TaskRepositoryInterface
             'tasks' => $taskQuery->get(),
             'blocks' => $blockQuery->get()
         ];
+    }
+
+    public function filteredTasks($params, $user_id): Collection|array
+    {
+        $startOfDay = Carbon::parse($params['date'])->startOfDay();
+        $endOfDay = Carbon::parse($params['date'])->endOfDay();
+        $taskQuery = Task::query()
+            ->where('user_id', $user_id)
+            ->when($params['date'], function ($query) use ($startOfDay, $endOfDay) {
+                $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
+            })
+            ->when($params['type'] === "block", function ($query) use ($params) {
+                $query->whereHas('block');
+            })
+            ->when($params['type'] === "goal", function ($query) use ($params) {
+                $query->whereHas('goal');
+            })
+            ->when($params['type'] === "habit", function ($query) use ($params) {
+                $query->whereHas('habit');
+            });
+        return $taskQuery->get();
     }
 
 

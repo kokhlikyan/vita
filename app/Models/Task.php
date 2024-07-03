@@ -27,4 +27,14 @@ class Task extends Model
         return $this->belongsTo(Block::class);
     }
 
+    public function goal(): BelongsTo
+    {
+        return $this->belongsTo(Goal::class);
+    }
+
+    public function habit(): BelongsTo
+    {
+        return $this->belongsTo(Habit::class);
+    }
+
 }

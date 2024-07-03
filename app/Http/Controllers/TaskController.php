@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\TaskDTO;
 use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\TaskFilterRequest;
 use App\Http\Requests\TaskListQueryParamsRequest;
 use App\Http\Resources\BlockResource;
 use App\Http\Resources\PaginatorResource;
@@ -15,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
+
 class TaskController extends Controller
 {
 
@@ -248,7 +250,6 @@ class TaskController extends Controller
     }
 
 
-
     #[OA\Delete(
         path: "/api/v1/tasks/{id}",
         summary: "Delete task by ID",
@@ -390,7 +391,7 @@ class TaskController extends Controller
             return response()->json([
                 'data' => new TaskResource($task)
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([
                 'message' => 'Bad request'
@@ -516,6 +517,67 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+
+    #[OA\Get(
+        path: "/api/v1/tasks/filter",
+        summary: "Filter tasks",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "date",
+                description: "Date",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+            new OA\Parameter(
+                name: "type",
+                description: "Type",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "string", enum: ["block", "goal", "habit"])
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tasks found",
+                content: [
+                    new OA\JsonContent(
+                        properties: [
+                            new OA\Property(
+                                property: 'data',
+                                type: 'array',
+                                items: new OA\Items(ref: "#/components/schemas/TaskSchema")
+                            )
+                        ]
+                    )
+                ]
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+        ]
+    )]
+    public function filteredTasks(TaskFilterRequest $request): JsonResponse
+    {
+        try {
+            $tasks = $this->taskService->filteredTasks($request->validated());
+            return response()->json([
+                'data' => TaskResource::collection($tasks)
+            ]);
+        }catch (\Exception $e){
+            Log::error(__METHOD__ . '->' . $e->getMessage());
+            return response()->json([
+                'message' => 'Bad request'
             ], 400);
         }
     }
