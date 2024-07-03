@@ -41,10 +41,6 @@ use OpenApi\Attributes as OA;
             property: 'updated_at',
             type: 'datetime',
         ),
-        new OA\Property(
-            property: 'recurrence',
-            ref: RecurrenceSchema::class
-        )
     ]
 
 )]

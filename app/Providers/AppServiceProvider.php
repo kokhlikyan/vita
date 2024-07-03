@@ -6,9 +6,7 @@ use App\Repositories\GoalRepository;
 use App\Repositories\HabitRepository;
 use App\Repositories\Interfaces\GoalRepositoryInterface;
 use App\Repositories\Interfaces\HabitRepositoryInterface;
-use App\Repositories\Interfaces\RecurrenceRepositoryInterface;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
-use App\Repositories\RecurrenceRepository;
 use App\Repositories\TaskRepository;
 use App\Services\GoalService;
 use App\Services\HabitService;
@@ -41,13 +39,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
-        $this->app->bind(RecurrenceRepositoryInterface::class, RecurrenceRepository::class);
-
         $this->app->bind(TaskService::class, function ($app) {
-            return new TaskService(
-                $app->make(TaskRepositoryInterface::class),
-                $app->make(RecurrenceRepositoryInterface::class)
-            );
+            return new TaskService($app->make(TaskRepositoryInterface::class));
         });
 
 

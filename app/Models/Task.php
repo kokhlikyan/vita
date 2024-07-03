@@ -22,11 +22,6 @@ class Task extends Model
         ];
     }
 
-    public function recurrence(): HasOne
-    {
-        return $this->hasOne(Recurrence::class);
-    }
-
     public function block(): BelongsTo
     {
         return $this->belongsTo(Block::class);

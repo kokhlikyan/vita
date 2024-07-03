@@ -32,7 +32,6 @@ class CreateHabitRequest extends FormRequest
             'tasks.*.details' => ['string'],
             'tasks.*.all_day' => ['boolean'],
             'tasks.*.block_id' => ['integer', 'exists:blocks,id'],
-            'tasks.*.recurrence_interval' => ['integer'],
             'tasks.*.recurrence_type' => ['string', Rule::in(array_column(RepeatTypes::cases(), 'value'))],
             'tasks.*.start_date' => ['date', 'after_or_equal:today'],
             'tasks.*.end_date' => ['date', 'after_or_equal:start_date'],

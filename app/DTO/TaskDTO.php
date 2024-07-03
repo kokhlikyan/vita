@@ -7,6 +7,7 @@ class TaskDTO extends BaseDTO
 
 
     public function __construct(
+        protected readonly string $uuid,
         protected readonly string $title,
         protected readonly int    $user_id,
         protected readonly ?string $details = null,
