@@ -39,7 +39,7 @@ class TaskService
         return $newTasks;
     }
 
-    private function generateTaskList(array $data, $userID)
+    private function generateTaskList(array $data, $userID): array
     {
         $tasks = [];
         $uuid = Str::uuid();
@@ -123,7 +123,8 @@ class TaskService
     public function list($params)
     {
         $sortDayCount = (int)($params['sort'] ?? 1);
-        return $this->taskRepository->list($sortDayCount, auth()->id());
+        $date = Carbon::parse($params['date'] ?? now());
+        return $this->taskRepository->list($sortDayCount, $date, auth()->id());
     }
 
 

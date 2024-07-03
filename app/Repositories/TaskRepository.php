@@ -61,30 +61,29 @@ class TaskRepository implements TaskRepositoryInterface
             ->get();
     }
 
-    public function list($sortDayCount, $user_id): Collection|array
+    public function list($sortDayCount, $date, $user_id): Collection|array
     {
+        $startOfDay = $date->copy()->startOfDay()->startOfDay();
+        if ($sortDayCount > 1){
+            $endOfDay = $date->copy()->addDays($sortDayCount)->endOfDay()->endOfDay();
+        }else{
+            $endOfDay = $date->copy()->endOfDay()->endOfDay();
+        }
 
         $taskQuery = Task::query()
             ->where('tasks.user_id', $user_id)
             ->doesntHave('block')
-            ->when($sortDayCount === 1, function ($query) {
-                $query->whereBetween('start_date', [now()->startOfDay(), now()->endOfDay()]);
-            })
-            ->when($sortDayCount > 1, function ($query) use ($sortDayCount) {
-                $query->whereBetween('start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
+            ->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
+                $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
             });
 
         $blockQuery = Block::query()
             ->where('blocks.user_id', $user_id)
-            ->with(['tasks' => function ($query) use ($sortDayCount) {
-                $query->when($sortDayCount === 1, function ($query) {
-                    $query->whereBetween('start_date', [now()->startOfDay(), now()->endOfDay()]);
-                })
-                    ->when($sortDayCount > 1, function ($query) use ($sortDayCount) {
-                        $query->whereBetween('start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
-                    });
+            ->with(['tasks' => function ($query) use ($startOfDay, $endOfDay, $sortDayCount) {
+                $query->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
+                    $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
+                });
             }]);
-
         return [
             'tasks' => $taskQuery->get(),
             'blocks' => $blockQuery->get()

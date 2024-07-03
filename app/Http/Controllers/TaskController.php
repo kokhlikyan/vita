@@ -462,6 +462,13 @@ class TaskController extends Controller
                 required: false,
                 schema: new OA\Schema(type: "integer")
             ),
+            new OA\Parameter(
+                name: "date",
+                description: "Date",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
         ],
         responses: [
             new OA\Response(

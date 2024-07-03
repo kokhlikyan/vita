@@ -26,6 +26,7 @@ class TaskListQueryParamsRequest extends FormRequest
         return [
             'search' => ['string', 'max:255'],
             'sort' => ['int', 'min:1', 'max:365'],
+            'date' => ['date'],
         ];
     }
 }
