@@ -11,7 +11,6 @@ Route::prefix('v1')->group(function () {
         ->group(function () {
             Route::get('/', 'all');
             Route::get('/{id}', 'findById');
-            Route::get('/tasks', 'getTasks');
             Route::post('/', 'create');
             Route::delete('/{id}', 'delete');
             Route::put('/{id}', 'update');

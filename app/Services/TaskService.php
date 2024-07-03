@@ -127,5 +127,10 @@ class TaskService
         return $this->taskRepository->list($sortDayCount, $date, auth()->id());
     }
 
+    public function filteredTasks($params)
+    {
+        return $this->taskRepository->filteredTasks($params, auth()->id());
+    }
+
 
 }
