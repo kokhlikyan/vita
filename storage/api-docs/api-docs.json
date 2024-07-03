@@ -1465,6 +1465,10 @@
                                         "type": "boolean",
                                         "example": false
                                     },
+                                    "recurrence_type": {
+                                        "type": "boolean",
+                                        "example": "daily|weekly|monthly"
+                                    },
                                     "start_date": {
                                         "type": "string",
                                         "format": "date",
@@ -1489,7 +1493,10 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/TaskSchema"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskSchema"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -2017,9 +2024,6 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "recurrence": {
-                        "$ref": "#/components/schemas/RecurrenceSchema"
                     }
                 },
                 "type": "object"

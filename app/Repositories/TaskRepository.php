@@ -16,7 +16,7 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function all(int $user_id, $search, $page): LengthAwarePaginator
     {
-        $task =  Task::query()
+        $task = Task::query()
             ->where('user_id', $user_id)
             ->when($search, function ($query) use ($search) {
                 $query->where('title', 'like', "%$search%");
@@ -66,39 +66,23 @@ class TaskRepository implements TaskRepositoryInterface
 
         $taskQuery = Task::query()
             ->where('tasks.user_id', $user_id)
-            ->leftJoin('recurrences', 'tasks.id', '=', 'recurrences.task_id')
             ->doesntHave('block')
             ->when($sortDayCount === 1, function ($query) {
-                $query->whereBetween('tasks.start_date', [now()->startOfDay(), now()->endOfDay()]);
+                $query->whereBetween('start_date', [now()->startOfDay(), now()->endOfDay()]);
             })
             ->when($sortDayCount > 1, function ($query) use ($sortDayCount) {
-                $query->whereBetween('tasks.start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()])
-                    ->where(function ($query) use ($sortDayCount) {
-                        $query->where('recurrences.end_date', '>=', now()->startOfDay())
-                            ->orWhereNull('recurrences.end_date')
-                            ->whereBetween('tasks.start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
-                    });
-            })
-            ->with('recurrence')
-            ->select('tasks.*');
+                $query->whereBetween('start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
+            });
 
         $blockQuery = Block::query()
             ->where('blocks.user_id', $user_id)
             ->with(['tasks' => function ($query) use ($sortDayCount) {
-                $query->leftJoin('recurrences', 'tasks.id', '=', 'recurrences.task_id')
-                    ->when($sortDayCount === 1, function ($query) {
-                        $query->whereBetween('tasks.start_date', [now()->startOfDay(), now()->endOfDay()]);
-                    })
+                $query->when($sortDayCount === 1, function ($query) {
+                    $query->whereBetween('start_date', [now()->startOfDay(), now()->endOfDay()]);
+                })
                     ->when($sortDayCount > 1, function ($query) use ($sortDayCount) {
-                        $query->whereBetween('tasks.start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()])
-                            ->where(function ($query) use ($sortDayCount) {
-                                $query->where('recurrences.end_date', '>=', now()->startOfDay())
-                                    ->orWhereNull('recurrences.end_date')
-                                    ->whereBetween('tasks.start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
-                            });
-                    })
-                    ->with('recurrence')
-                    ->select('tasks.*');
+                        $query->whereBetween('start_date', [now()->startOfDay(), now()->addDays($sortDayCount)->endOfDay()]);
+                    });
             }]);
 
         return [

@@ -22,7 +22,6 @@ class TaskResource extends JsonResource
             'title' => $this->title,
             'details' => $this->details,
             'all_day' => $this->all_day,
-            'recurrence' => new RecurrenceResource($this->recurrence),
             'start_date' => $this->start_date,
             'completed' => $this->completed,
             'created_at' => $this->created_at,

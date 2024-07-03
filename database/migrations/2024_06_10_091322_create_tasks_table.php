@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+            $table->uuid();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('block_id')->nullable();
             $table->integer('goal_id')->nullable()->comment('can choose one of these goals or habits');
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->timestamp('start_date')->default(now());
             $table->timestamps();
             $table->softDeletes();
+            $table->index('title');
         });
     }
 

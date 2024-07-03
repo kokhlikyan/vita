@@ -198,6 +198,11 @@ class TaskController extends Controller
                         example: false
                     ),
                     new OA\Property(
+                        property: 'recurrence_type',
+                        type: 'boolean',
+                        example: 'daily|weekly|monthly'
+                    ),
+                    new OA\Property(
                         property: 'start_date',
                         type: 'string',
                         format: 'date',
@@ -221,7 +226,8 @@ class TaskController extends Controller
                     properties: [
                         new OA\Property(
                             property: 'data',
-                            ref: "#/components/schemas/TaskSchema"
+                            type: 'array',
+                            items: new OA\Items(ref: "#/components/schemas/TaskSchema")
                         )
                     ]
                 )
@@ -235,9 +241,9 @@ class TaskController extends Controller
     public function create(CreateTaskRequest $request): JsonResponse
     {
 
-        $task = $this->taskService->create($request->validated());
+        $tasks = $this->taskService->create($request->validated());
         return response()->json([
-            'data' => new TaskResource($task)
+            'data' => TaskResource::collection($tasks)
         ], 201);
     }
 
