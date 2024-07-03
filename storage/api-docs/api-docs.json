@@ -1739,6 +1739,17 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
                     }
                 ],
                 "responses": {
@@ -1924,46 +1935,6 @@
                             }
                         },
                         "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "RecurrenceSchema": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "task_id": {
-                        "type": "integer"
-                    },
-                    "recurrence_type": {
-                        "type": "string",
-                        "example": "daily, weekly, monthly"
-                    },
-                    "interval": {
-                        "type": "integer"
-                    },
-                    "day_of_week": {
-                        "type": "integer"
-                    },
-                    "day_of_month": {
-                        "type": "integer"
-                    },
-                    "month_of_year": {
-                        "type": "string"
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 },
                 "type": "object"
