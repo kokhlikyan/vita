@@ -648,4 +648,63 @@ class TaskController extends Controller
         }
     }
 
+
+    #[OA\Get(
+        path: "/api/v1/tasks/missed",
+        summary: "Get missed tasks",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "page",
+                description: "The number of items to display per page (default 15)",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tasks found",
+                content: [
+                    new OA\JsonContent(
+                        properties: [
+                            new OA\Property(
+                                property: 'data',
+                                type: 'array',
+                                items: new OA\Items(ref: "#/components/schemas/TaskSchema")
+                            ),
+                            new OA\Property(
+                                property: 'pagination',
+                                ref: "#/components/schemas/PaginatorSchema"
+                            )
+                        ]
+                    )
+                ]
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+        ]
+    )]
+    public function getMissedTasks(TaskListQueryParamsRequest $request): JsonResponse
+    {
+        try {
+            $tasks = $this->taskService->getMissedTasks($request->input('page'));
+            return response()->json([
+                'data' => TaskResource::collection($tasks),
+                'pagination' => new PaginatorResource($tasks)
+            ]);
+        }catch (\Exception $e){
+            Log::error(__METHOD__ . '->' . $e->getMessage());
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        }
+    }
+
 }

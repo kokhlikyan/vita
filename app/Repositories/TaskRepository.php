@@ -139,7 +139,15 @@ class TaskRepository implements TaskRepositoryInterface
             })
             ->withTrashed();
 
-        $tasks = $query->paginate($params['page'] ?? null);
-        return $tasks;
+        return $query->paginate($params['page'] ?? null);
+    }
+
+    public function getMissedTasks($page, $user_id)
+    {
+        return Task::query()
+            ->where('user_id', $user_id)
+            ->where('start_date', '<', now())
+            ->where('completed', false)
+            ->paginate($page);
     }
 }
