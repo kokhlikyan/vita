@@ -13,11 +13,11 @@ use OpenApi\Attributes as OA;
             example: 1
         ),
         new OA\Property(
-            property: 'name',
+            property: 'title',
             type: 'string',
         ),
         new OA\Property(
-            property: 'purpose',
+            property: 'details',
             type: 'string',
         ),
         new OA\Property(

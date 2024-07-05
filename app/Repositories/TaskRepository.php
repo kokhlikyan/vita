@@ -65,9 +65,9 @@ class TaskRepository implements TaskRepositoryInterface
     public function list($sortDayCount, $date, $user_id): Collection|array
     {
         $startOfDay = $date->copy()->startOfDay()->startOfDay();
-        if ($sortDayCount > 1){
+        if ($sortDayCount > 1) {
             $endOfDay = $date->copy()->addDays($sortDayCount)->endOfDay()->endOfDay();
-        }else{
+        } else {
             $endOfDay = $date->copy()->endOfDay()->endOfDay();
         }
 
@@ -124,5 +124,22 @@ class TaskRepository implements TaskRepositoryInterface
                 $task->delete();
             }
         }
+    }
+
+    public function getHistory($params, $user_id)
+    {
+        $query = Task::query()
+            ->where('user_id', $user_id)
+            ->where('completed', true)
+            ->when($params['date'] ?? false, function ($query) use ($params) {
+                $startOfMonth = Carbon::parse($params['date'])->startOfMonth();
+                $endOfMonth = Carbon::parse($params['date'])->endOfMonth();
+
+                $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
+            })
+            ->withTrashed();
+
+        $tasks = $query->paginate($params['page'] ?? null);
+        return $tasks;
     }
 }

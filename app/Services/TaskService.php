@@ -132,5 +132,10 @@ class TaskService
         return $this->taskRepository->filteredTasks($params, auth()->id());
     }
 
+    public function getHistory($params)
+    {
+        return $this->taskRepository->getHistory($params, auth()->id());
+    }
+
 
 }

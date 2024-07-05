@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('blocks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->string('name');
-            $table->text('purpose')->nullable();
+            $table->string('title');
+            $table->text('details')->nullable();
             $table->enum('type', array_column(BlockTypes::cases(), 'value'));
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
