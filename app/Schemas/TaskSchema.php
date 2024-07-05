@@ -20,9 +20,13 @@ use OpenApi\Attributes as OA;
                     type: 'integer',
                 ),
                 new OA\Property(
-                    property: 'name',
+                    property: 'title',
                     type: 'string',
                 ),
+                new OA\Property(
+                    property: 'color',
+                    type: 'string',
+                )
             ],
             type: 'object'
         ),
@@ -34,7 +38,7 @@ use OpenApi\Attributes as OA;
                     type: 'integer',
                 ),
                 new OA\Property(
-                    property: 'name',
+                    property: 'title',
                     type: 'string',
                 ),
             ],
@@ -48,7 +52,7 @@ use OpenApi\Attributes as OA;
                     type: 'integer',
                 ),
                 new OA\Property(
-                    property: 'name',
+                    property: 'title',
                     type: 'string',
                 ),
             ],

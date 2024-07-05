@@ -494,10 +494,10 @@
                                     "type"
                                 ],
                                 "properties": {
-                                    "name": {
+                                    "title": {
                                         "type": "string"
                                     },
-                                    "purpose": {
+                                    "details": {
                                         "type": "string",
                                         "nullable": true
                                     },
@@ -635,10 +635,10 @@
                                     "type"
                                 ],
                                 "properties": {
-                                    "name": {
+                                    "title": {
                                         "type": "string"
                                     },
-                                    "purpose": {
+                                    "details": {
                                         "type": "string",
                                         "nullable": true
                                     },
@@ -1866,10 +1866,10 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "name": {
+                    "title": {
                         "type": "string"
                     },
-                    "purpose": {
+                    "details": {
                         "type": "string"
                     },
                     "type": {
@@ -2041,7 +2041,10 @@
                             "id": {
                                 "type": "integer"
                             },
-                            "name": {
+                            "title": {
+                                "type": "string"
+                            },
+                            "color": {
                                 "type": "string"
                             }
                         },
@@ -2052,7 +2055,7 @@
                             "id": {
                                 "type": "integer"
                             },
-                            "name": {
+                            "title": {
                                 "type": "string"
                             }
                         },
@@ -2063,7 +2066,7 @@
                             "id": {
                                 "type": "integer"
                             },
-                            "name": {
+                            "title": {
                                 "type": "string"
                             }
                         },

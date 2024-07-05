@@ -20,4 +20,6 @@ interface TaskRepositoryInterface
 
     public function recursiveDelete($tasks);
 
+    public function getHistory($params, $user_id);
+
 }

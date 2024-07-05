@@ -582,4 +582,21 @@ class TaskController extends Controller
         }
     }
 
+
+    public function getHistory(TaskListQueryParamsRequest $request): JsonResponse
+    {
+        try {
+            $history = $this->taskService->getHistory($request->validated());
+            return response()->json([
+                'data' => TaskResource::collection($history),
+                'pagination' => new PaginatorResource($history)
+            ]);
+        }catch (\Exception $e){
+            Log::error(__METHOD__ . '->' . $e->getMessage());
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        }
+    }
+
 }

@@ -18,8 +18,8 @@ class BlockResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'purpose' => $this->purpose,
+            'title' => $this->title,
+            'details' => $this->details,
             'type' => $this->type,
             'color' => $this->color,
             'tasks' => TaskResource::collection($this->tasks),

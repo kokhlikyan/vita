@@ -109,8 +109,8 @@ class BlockController extends Controller
                     'type',
                 ],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string'),
-                    new OA\Property(property: 'purpose', type: 'string', nullable: true),
+                    new OA\Property(property: 'title', type: 'string'),
+                    new OA\Property(property: 'details', type: 'string', nullable: true),
                     new OA\Property(property: 'type', description: 'Type of the block should be one of the following: temporary, permanent, completed', type: 'string'),
                     new OA\Property(property: 'color', type: 'string', nullable: true),
                     new OA\Property(property: 'start_date', type: 'string', format: 'date', example: '05.06.2024'),
@@ -214,8 +214,8 @@ class BlockController extends Controller
                     'type',
                 ],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string'),
-                    new OA\Property(property: 'purpose', type: 'string', nullable: true),
+                    new OA\Property(property: 'title', type: 'string'),
+                    new OA\Property(property: 'details', type: 'string', nullable: true),
                     new OA\Property(property: 'type', description: 'Type of the block should be one of the following: temporary, permanent, completed', type: 'string'),
                     new OA\Property(property: 'color', type: 'string', nullable: true),
                     new OA\Property(property: 'start_date', type: 'string', format: 'date', example: '05.06.2024'),

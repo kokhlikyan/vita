@@ -27,8 +27,8 @@ class CreateBlockRequest extends FormRequest
         $blockTypesString = implode(',', array_column(BlockTypes::cases(), 'value'));
 
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'purpose' => ['string'],
+            'title' => ['required', 'string', 'max:255'],
+            'details' => ['string'],
             'type' => ['required', 'string', 'max:255', 'in:' . $blockTypesString],
             'start_date' => [
                 'required_if:type,temporary',

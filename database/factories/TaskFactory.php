@@ -20,12 +20,13 @@ class TaskFactory extends Factory
         // get users from the database and user random id
         $user = User::query()->inRandomOrder()->first();
         $data = [
+            'uuid' => $this->faker->uuid,
             'user_id' => $user->id,
             'title' => $this->faker->sentence,
             'details' => $this->faker->paragraph,
-            'completed' => false,
+            'completed' => $this->faker->boolean,
             'all_day' => $this->faker->boolean,
-            'start_date' => $this->faker->dateTimeBetween(now(), '+3 month')
+            'start_date' => $this->faker->dateTimeBetween(now(), '+12 month')
         ];
         return $data;
     }
