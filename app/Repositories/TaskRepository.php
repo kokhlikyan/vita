@@ -35,9 +35,14 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::query()->find($id)->update($data);
     }
 
-    public function delete($id)
+    public function delete($id, $user_id, $force): bool
     {
-        return Task::query()->find($id)->delete();
+        $task = Task::query()->where('user_id', $user_id)
+        ->withTrashed()->find($id);
+
+        if (!$task) return false;
+
+        return $force ? $task->forceDelete() : $task->delete();
     }
 
     public function find($id, $user_id): Model|Collection|Builder|array|null

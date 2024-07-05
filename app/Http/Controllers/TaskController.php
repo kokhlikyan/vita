@@ -265,6 +265,13 @@ class TaskController extends Controller
                 required: true,
                 schema: new OA\Schema(type: "integer")
             ),
+            new OA\Parameter(
+                name: "force",
+                description: "Force delete",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "boolean")
+            ),
         ],
         responses: [
             new OA\Response(
@@ -277,9 +284,9 @@ class TaskController extends Controller
             ),
         ]
     )]
-    public function delete($id): JsonResponse
+    public function delete(TaskListQueryParamsRequest $request,$id): JsonResponse
     {
-        $deleted = $this->taskService->delete($id);
+        $deleted = $this->taskService->delete($id, $request->input('force', false));
         if (!$deleted) {
             return response()->json(['message' => 'Resource not found'], 404);
         }

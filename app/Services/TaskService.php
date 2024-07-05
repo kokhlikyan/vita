@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTO\TaskDTO;
+use App\Models\Task;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -92,13 +93,9 @@ class TaskService
         return $tasks;
     }
 
-    public function delete($id): bool
+    public function delete($id, $force): bool
     {
-        $task = $this->taskRepository->find($id, auth()->id());
-        if (!$task) {
-            return false;
-        }
-        return $this->taskRepository->delete($id);
+        return $this->taskRepository->delete($id, auth()->id(), $force);
     }
 
     public function update(array $data, $id)

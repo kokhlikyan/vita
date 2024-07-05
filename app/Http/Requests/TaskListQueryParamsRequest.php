@@ -28,6 +28,7 @@ class TaskListQueryParamsRequest extends FormRequest
             'sort' => ['int', 'min:1', 'max:365'],
             'date' => ['date'],
             'page' => ['int', 'min:1'],
+            'force' => ['boolean'],
         ];
     }
 }
