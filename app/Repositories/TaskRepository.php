@@ -112,5 +112,17 @@ class TaskRepository implements TaskRepositoryInterface
         return $taskQuery->get();
     }
 
+    public function recursiveDelete($tasks): void
+    {
+        if ($tasks->count() === 0) return;
 
+        foreach ($tasks as $task) {
+            $task->delete();
+            if (!$task->completed) {
+                $task->forceDelete();
+            } else {
+                $task->delete();
+            }
+        }
+    }
 }

@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\GoalRepositoryInterface;
+use App\Repositories\Interfaces\TaskRepositoryInterface;
 
- readonly class GoalService
+readonly class GoalService
 {
-    public function __construct(private GoalRepositoryInterface $goalRepository)
+    public function __construct(
+        private GoalRepositoryInterface $goalRepository,
+        private TaskRepositoryInterface $taskRepository
+    )
     {
     }
 
@@ -41,6 +45,7 @@ use App\Repositories\Interfaces\GoalRepositoryInterface;
         if (!$goal) {
             return false;
         }
+        $this->taskRepository->recursiveDelete($goal->tasks);
         return $this->goalRepository->delete($id);
     }
 
