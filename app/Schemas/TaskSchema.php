@@ -12,6 +12,48 @@ use OpenApi\Attributes as OA;
             type: 'integer',
             example: 1
         ),
+        new OA\property(
+            property: 'block',
+            properties: [
+                new OA\Property(
+                    property: 'id',
+                    type: 'integer',
+                ),
+                new OA\Property(
+                    property: 'name',
+                    type: 'string',
+                ),
+            ],
+            type: 'object'
+        ),
+        new OA\property(
+            property: 'goal',
+            properties: [
+                new OA\Property(
+                    property: 'id',
+                    type: 'integer',
+                ),
+                new OA\Property(
+                    property: 'name',
+                    type: 'string',
+                ),
+            ],
+            type: 'object'
+        ),
+        new OA\property(
+            property: 'habit',
+            properties: [
+                new OA\Property(
+                    property: 'id',
+                    type: 'integer',
+                ),
+                new OA\Property(
+                    property: 'name',
+                    type: 'string',
+                ),
+            ],
+            type: 'object'
+        ),
         new OA\Property(
             property: 'title',
             type: 'string',
