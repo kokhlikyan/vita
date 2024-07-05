@@ -138,4 +138,8 @@ class TaskService
     }
 
 
+    public function getMissedTasks($page)
+    {
+        return $this->taskRepository->getMissedTasks($page, auth()->id());
+    }
 }
