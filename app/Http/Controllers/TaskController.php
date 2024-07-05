@@ -583,6 +583,55 @@ class TaskController extends Controller
     }
 
 
+    #[OA\Get(
+        path: "/api/v1/tasks/history",
+        summary: "Get task history",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "page",
+                description: "The number of items to display per page (default 15)",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+            new OA\Parameter(
+                name: "date",
+                description: "Date to filter by",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Tasks found",
+                content: [
+                    new OA\JsonContent(
+                        properties: [
+                            new OA\Property(
+                                property: 'data',
+                                type: 'array',
+                                items: new OA\Items(ref: "#/components/schemas/TaskSchema")
+                            ),
+                            new OA\Property(
+                                property: 'pagination',
+                                ref: "#/components/schemas/PaginatorSchema"
+                            )
+                        ]
+                    )
+                ]
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+        ]
+    )]
     public function getHistory(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {

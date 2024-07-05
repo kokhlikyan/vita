@@ -1856,6 +1856,68 @@
                     }
                 ]
             }
+        },
+        "/api/v1/tasks/history": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get task history",
+                "operationId": "c3e0e27ada48ec37a7cc5db8fc786db3",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The number of items to display per page (default 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date to filter by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskSchema"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/PaginatorSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
