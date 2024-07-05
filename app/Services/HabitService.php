@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\HabitRepositoryInterface;
+use App\Repositories\Interfaces\TaskRepositoryInterface;
 
 readonly class HabitService
 {
-    public function __construct(private HabitRepositoryInterface $habitRepository)
+    public function __construct(
+        private HabitRepositoryInterface $habitRepository,
+        private TaskRepositoryInterface $taskRepository
+    )
     {
     }
 
@@ -40,6 +44,7 @@ readonly class HabitService
         if (!$habit) {
             return false;
         }
+        $this->taskRepository->recursiveDelete($habit->tasks);
         return $this->habitRepository->delete($id);
     }
 

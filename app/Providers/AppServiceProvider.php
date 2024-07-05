@@ -23,25 +23,36 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(BlockRepositoryInterface::class, BlockRepository::class);
-        $this->app->bind(BlockService::class, function ($app) {
-            return new BlockService($app->make(BlockRepositoryInterface::class));
-        });
-
-        $this->app->bind(GoalRepositoryInterface::class, GoalRepository::class);
-        $this->app->bind(GoalService::class, function ($app) {
-            return new GoalService($app->make(GoalRepositoryInterface::class));
-        });
-
-        $this->app->bind(HabitRepositoryInterface::class, HabitRepository::class);
-        $this->app->bind(HabitService::class, function ($app) {
-            return new HabitService($app->make(HabitRepositoryInterface::class));
-        });
-
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
         $this->app->bind(TaskService::class, function ($app) {
             return new TaskService($app->make(TaskRepositoryInterface::class));
         });
+
+        $this->app->bind(BlockRepositoryInterface::class, BlockRepository::class);
+        $this->app->bind(BlockService::class, function ($app) {
+            return new BlockService(
+                $app->make(BlockRepositoryInterface::class),
+                $app->make(TaskRepositoryInterface::class)
+            );
+        });
+
+        $this->app->bind(GoalRepositoryInterface::class, GoalRepository::class);
+        $this->app->bind(GoalService::class, function ($app) {
+            return new GoalService(
+                $app->make(GoalRepositoryInterface::class),
+                $app->make(TaskRepositoryInterface::class)
+            );
+        });
+
+        $this->app->bind(HabitRepositoryInterface::class, HabitRepository::class);
+        $this->app->bind(HabitService::class, function ($app) {
+            return new HabitService(
+                $app->make(HabitRepositoryInterface::class),
+                $app->make(TaskRepositoryInterface::class)
+            );
+        });
+
+
 
 
     }

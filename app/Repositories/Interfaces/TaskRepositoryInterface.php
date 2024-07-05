@@ -18,4 +18,6 @@ interface TaskRepositoryInterface
 
     public function filteredTasks($params, $user_id);
 
+    public function recursiveDelete($tasks);
+
 }
