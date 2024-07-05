@@ -24,17 +24,17 @@ class Task extends Model
 
     public function block(): BelongsTo
     {
-        return $this->belongsTo(Block::class);
+        return $this->belongsTo(Block::class)->select(['id', 'name']);
     }
 
     public function goal(): BelongsTo
     {
-        return $this->belongsTo(Goal::class);
+        return $this->belongsTo(Goal::class)->select(['id', 'title']);
     }
 
     public function habit(): BelongsTo
     {
-        return $this->belongsTo(Habit::class);
+        return $this->belongsTo(Habit::class)->select(['id', 'title']);
     }
 
 }
