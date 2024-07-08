@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Models\Settings;
+use Illuminate\Support\Facades\Log;
 
 class SettingsService
 {
-    public function createOrUpdate($request): array
+    public function createOrUpdate($request): void
     {
         $data = array_filter([
             'goals_color' => $request->input('goals_color'),
@@ -15,20 +16,9 @@ class SettingsService
         ], function ($value) {
             return $value !== null;
         });
-        $settings = Settings::query()->updateOrCreate(
+        Settings::query()->updateOrCreate(
             ['user_id' => auth()->id()],
             $data
         );
-        if ($settings->wasRecentlyCreated) {
-            return [
-                'message' => 'Settings created successfully.',
-                'code' => 201
-            ];
-        } else {
-            return [
-                'message' => 'Settings updated successfully.',
-                'code' => 200
-            ];
-        }
     }
 }

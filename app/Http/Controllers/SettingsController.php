@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SettingsRequest;
+use App\Http\Resources\UserResource;
+use App\Schemas\UserSchema;
 use App\Services\SettingsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -35,20 +37,14 @@ class SettingsController extends Controller
         tags: ["Settings"],
         responses: [
             new OA\Response(
-                response: "201",
-                description: "Settings created successfully.",
+                response: 200,
+                description: "User information",
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: "message", type: "string")
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: "200",
-                description: "Settings updated successfully.",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "message", type: "string")
+                        new OA\Property(
+                            property: 'data',
+                            ref: UserSchema::class
+                        ),
                     ]
                 )
             ),
@@ -66,11 +62,10 @@ class SettingsController extends Controller
     public function createOrUpdate(SettingsRequest $request): JsonResponse
     {
         try {
-            $settings = $this->settingsService->createOrUpdate($request);
-
+            $this->settingsService->createOrUpdate($request);
             return response()->json([
-                'message' => $settings['message'],
-            ], $settings['code']);
+                'data' => new UserResource(auth()->user())
+            ]);
         } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([

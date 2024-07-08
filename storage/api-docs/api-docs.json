@@ -1308,29 +1308,14 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Settings created successfully.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
                     "200": {
-                        "description": "Settings updated successfully.",
+                        "description": "User information",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "message": {
-                                            "type": "string"
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSchema"
                                         }
                                     },
                                     "type": "object"
