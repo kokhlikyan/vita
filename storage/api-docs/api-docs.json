@@ -2125,6 +2125,23 @@
                 },
                 "type": "object"
             },
+            "SettingsSchema": {
+                "properties": {
+                    "goals_color": {
+                        "type": "string",
+                        "example": "#FFFFFF"
+                    },
+                    "habits_color": {
+                        "type": "string",
+                        "example": "#FFFFFF"
+                    },
+                    "blocks_color": {
+                        "type": "string",
+                        "example": "#FFFFFF"
+                    }
+                },
+                "type": "object"
+            },
             "TaskListSchema": {
                 "properties": {
                     "id": {
@@ -2250,6 +2267,9 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "settings": {
+                        "$ref": "#/components/schemas/SettingsSchema"
                     }
                 },
                 "type": "object"

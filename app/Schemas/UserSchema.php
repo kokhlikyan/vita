@@ -38,6 +38,10 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'updated_at',
             type: 'datetime',
+        ),
+        new OA\Property(
+            property: 'settings',
+            ref: SettingsSchema::class
         )
     ]
 )]

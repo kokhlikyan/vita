@@ -24,6 +24,7 @@ class SettingsRequest extends FormRequest
         return [
             'goals_color' => ['string'],
             'habits_color' => ['string'],
+            'blocks_color' => ['string'],
         ];
     }
 }
