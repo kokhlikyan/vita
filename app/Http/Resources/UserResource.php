@@ -25,7 +25,8 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'settings' => [
                 'goals_color' => $this->settings->goals_color,
-                'habits_color' => $this->settings->habits_color
+                'habits_color' => $this->settings->habits_color,
+                'blocks_color' => $this->settings->blocks_color
             ]
         ];
     }
