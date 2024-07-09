@@ -13,6 +13,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/list', 'list');
             Route::get('/filter', 'filteredTasks');
             Route::get('/history', 'getHistory');
+            Route::get('/overview', 'getOverview');
             Route::get('/missed', 'getMissedTasks');
             Route::get('/{id}', 'findById');
             Route::post('/', 'create');

@@ -134,7 +134,10 @@ class TaskService
         return $this->taskRepository->getHistory($params, auth()->id());
     }
 
-
+    public function getOverview($params)
+    {
+        return $this->taskRepository->getOverview($params, auth()->id());
+    }
     public function getMissedTasks($page)
     {
         return $this->taskRepository->getMissedTasks($page, auth()->id());

@@ -21,6 +21,7 @@ interface TaskRepositoryInterface
     public function recursiveDelete($tasks);
 
     public function getHistory($params, $user_id);
+    public function getOverview($params, $user_id);
 
     public function getMissedTasks($page, $user_id);
 

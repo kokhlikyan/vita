@@ -147,6 +147,21 @@ class TaskRepository implements TaskRepositoryInterface
         return $query->paginate($params['page'] ?? null);
     }
 
+    public function getOverview($params, $user_id)
+    {
+        $query = Task::query()
+            ->where('user_id', $user_id)
+            ->when($params['date'] ?? false, function ($query) use ($params) {
+                $startOfMonth = Carbon::parse($params['date'])->startOfMonth();
+                $endOfMonth = Carbon::parse($params['date'])->endOfMonth();
+
+                $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
+            })
+            ->withTrashed();
+
+        return $query->paginate($params['page'] ?? null);
+    }
+
     public function getMissedTasks($page, $user_id)
     {
         return Task::query()

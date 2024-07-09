@@ -1913,6 +1913,68 @@
                 ]
             }
         },
+        "/api/v1/tasks/overview": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get task overview",
+                "operationId": "acc74f461b5d077c28c6ac25fe0277b9",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The number of items to display per page (default 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date to filter by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tasks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskSchema"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/components/schemas/PaginatorSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/tasks/missed": {
             "get": {
                 "tags": [
