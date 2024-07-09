@@ -170,6 +170,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->where('user_id', $user_id)
             ->where('start_date', '<', now())
             ->where('completed', false)
+            ->orderBy('start_date')
             ->paginate($page);
     }
 }
