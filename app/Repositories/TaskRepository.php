@@ -142,7 +142,8 @@ class TaskRepository implements TaskRepositoryInterface
 
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
-            ->withTrashed();
+            ->withTrashed()
+            ->orderBy('start_date');
 
         return $query->paginate($params['page'] ?? null);
     }
@@ -157,7 +158,8 @@ class TaskRepository implements TaskRepositoryInterface
 
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
-            ->withTrashed();
+            ->withTrashed()
+            ->orderBy('start_date');
 
         return $query->paginate($params['page'] ?? null);
     }
