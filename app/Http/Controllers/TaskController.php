@@ -736,6 +736,13 @@ class TaskController extends Controller
                 required: false,
                 schema: new OA\Schema(type: "integer")
             ),
+            new OA\Parameter(
+                name: "date",
+                description: "Date to filter by",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
+            ),
         ],
         responses: [
             new OA\Response(
@@ -766,7 +773,7 @@ class TaskController extends Controller
     public function getMissedTasks(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->getMissedTasks($request->input('page'));
+            $tasks = $this->taskService->getMissedTasks($request->validated());
             return response()->json([
                 'data' => TaskResource::collection($tasks),
                 'pagination' => new PaginatorResource($tasks)

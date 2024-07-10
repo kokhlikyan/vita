@@ -1991,6 +1991,17 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date to filter by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
                     }
                 ],
                 "responses": {
