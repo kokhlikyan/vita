@@ -29,6 +29,14 @@ class TaskListQueryParamsRequest extends FormRequest
             'date' => ['date'],
             'page' => ['int', 'min:1'],
             'force' => ['boolean'],
+            'type' => ['string', 'in:independent,goal,habit,block'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'type.in' => 'The type must be one of the following: independent, goal, habit, block.',
         ];
     }
 }
