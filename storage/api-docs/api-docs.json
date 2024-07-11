@@ -1744,6 +1744,21 @@
                             "format": "date",
                             "example": "2024-01-01"
                         }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "independent",
+                                "goal",
+                                "habit",
+                                "block"
+                            ]
+                        }
                     }
                 ],
                 "responses": {
@@ -2212,7 +2227,11 @@
                     "details": {
                         "type": "string"
                     },
-                    "start_date": {
+                    "start": {
+                        "type": "string",
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "end": {
                         "type": "string",
                         "example": "2024-01-01 00:00:00"
                     },

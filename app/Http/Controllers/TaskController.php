@@ -477,6 +477,13 @@ class TaskController extends Controller
                 required: false,
                 schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
             ),
+            new OA\Parameter(
+                name: "type",
+                description: "Type",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["independent", "goal", "habit", "block"])
+            )
         ],
         responses: [
             new OA\Response(

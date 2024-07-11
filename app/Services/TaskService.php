@@ -121,7 +121,8 @@ class TaskService
     {
         $sortDayCount = (int)($params['sort'] ?? 1);
         $date = Carbon::parse($params['date'] ?? now());
-        return $this->taskRepository->list($sortDayCount, $date, auth()->id());
+        $type = $params['type'] ?? 'all';
+        return $this->taskRepository->list($sortDayCount, $date, $type, auth()->id());
     }
 
     public function filteredTasks($params)

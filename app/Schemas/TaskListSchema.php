@@ -21,7 +21,12 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
-            property: 'start_date',
+            property: 'start',
+            type: 'string',
+            example: '2024-01-01 00:00:00'
+        ),
+        new OA\Property(
+            property: 'end',
             type: 'string',
             example: '2024-01-01 00:00:00'
         ),

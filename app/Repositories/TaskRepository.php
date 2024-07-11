@@ -67,7 +67,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->get();
     }
 
-    public function list($sortDayCount, $date, $user_id): Collection|array
+    public function list($sortDayCount, $date, $type, $user_id): Collection|array
     {
         $startOfDay = $date->copy()->startOfDay()->startOfDay();
         if ($sortDayCount > 1) {
@@ -81,6 +81,20 @@ class TaskRepository implements TaskRepositoryInterface
             ->doesntHave('block')
             ->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
                 $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
+            })
+            ->when($type === 'independent', function ($query) {
+                $query->doesntHave('block')
+                    ->doesntHave('goal')
+                    ->doesntHave('habit');
+            })
+            ->when($type === 'block', function ($query) {
+                $query->whereHas('block');
+            })
+            ->when($type === 'goal', function ($query) {
+                $query->whereHas('goal');
+            })
+            ->when($type === 'habit', function ($query) {
+                $query->whereHas('habit');
             });
 
         $blockQuery = Block::query()
@@ -89,7 +103,29 @@ class TaskRepository implements TaskRepositoryInterface
                 $query->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
                     $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
                 });
-            }]);
+            }])
+        ->when($type === 'independent', function ($query) {
+            $query->whereHas('tasks', function ($query) {
+                $query->doesntHave('block')
+                    ->doesntHave('goal')
+                    ->doesntHave('habit');
+            });
+        })
+        ->when($type === 'block', function ($query) {
+            $query->whereHas('tasks', function ($query) {
+                $query->whereHas('block');
+            });
+        })
+        ->when($type === 'goal', function ($query) {
+            $query->whereHas('tasks', function ($query) {
+                $query->whereHas('goal');
+            });
+        })
+        ->when($type === 'habit', function ($query) {
+            $query->whereHas('tasks', function ($query) {
+                $query->whereHas('habit');
+            });
+        });
         return [
             'tasks' => $taskQuery->get(),
             'blocks' => $blockQuery->get()
