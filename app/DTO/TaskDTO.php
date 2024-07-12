@@ -17,6 +17,7 @@ class TaskDTO extends BaseDTO
         protected readonly ?bool   $completed = false,
         protected readonly ?bool   $all_day = false,
         protected readonly ?string $start_date = null,
+        protected readonly ?string $end_date = null,
     )
     {
 

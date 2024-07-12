@@ -55,8 +55,8 @@ class TaskService
                 habit_id: $data['habit_id'] ?? null,
                 completed: $data['completed'] ?? false,
                 all_day: $data['all_day'] ?? false,
-                start_date: $data['start_date'] ?? now()
-
+                start_date: $data['start_date'] ?? now(),
+                end_date: $data['end_date'] ?? Carbon::parse($data['start_date'])->addMinutes(30)
             );
         } else {
             $currentDate = Carbon::parse($data['start_date'] ?? Carbon::now()->addMonth(3));
@@ -73,7 +73,8 @@ class TaskService
                     habit_id: $data['habit_id'] ?? null,
                     completed: $data['completed'] ?? false,
                     all_day: $data['all_day'] ?? false,
-                    start_date: $currentDate->toDateTimeString()
+                    start_date: $currentDate->toDateTimeString(),
+                    end_date: $data['end_date'] ?? Carbon::parse($data['start_date'])->addMinutes(30)
 
                 );
                 if ($data['recurrence_type'] === 'daily') {
@@ -139,6 +140,7 @@ class TaskService
     {
         return $this->taskRepository->getOverview($params, auth()->id());
     }
+
     public function getMissedTasks($params)
     {
         return $this->taskRepository->getMissedTasks($params, auth()->id());
