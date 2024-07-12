@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->timestamp('end_date')->after('start_date')->default(now()->endOfDay());
+            $table->timestamp('end_date')->after('start_date')->default(now()->utc()->endOfDay());
         });
     }
 
