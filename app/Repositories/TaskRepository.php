@@ -27,11 +27,13 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function create(array $data): Model|Builder
     {
+        $data['end_date'] = $data['end_date'] ?? Carbon::parse($data['start_date'])->endOfDay();
         return Task::query()->create($data);
     }
 
     public function update(array $data, $id): bool|int
     {
+         $data['end_date'] = $data['end_date'] ?? Carbon::parse($data['start_date'])->endOfDay();
         return Task::query()->find($id)->update($data);
     }
 
