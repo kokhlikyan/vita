@@ -44,6 +44,9 @@ class TaskService
     {
         $tasks = [];
         $uuid = Str::uuid();
+        $taskEndDate = isset($data['all_day']) && $data['all_day']
+            ? Carbon::parse($data['start_date'])->endOfDay()
+            : Carbon::parse($data['start_date'])->addHour();
         if (!isset($data['recurrence_type'])) {
             $tasks[] = new TaskDTO(
                 uuid: $uuid,
@@ -56,7 +59,7 @@ class TaskService
                 completed: $data['completed'] ?? false,
                 all_day: $data['all_day'] ?? false,
                 start_date: $data['start_date'] ?? now(),
-                end_date: $data['end_date'] ?? Carbon::parse($data['start_date'])->addMinutes(30)
+                end_date: $taskEndDate
             );
         } else {
             $currentDate = Carbon::parse($data['start_date'] ?? Carbon::now()->addMonth(3));
@@ -74,7 +77,7 @@ class TaskService
                     completed: $data['completed'] ?? false,
                     all_day: $data['all_day'] ?? false,
                     start_date: $currentDate->toDateTimeString(),
-                    end_date: $data['end_date'] ?? Carbon::parse($data['start_date'])->addMinutes(30)
+                    end_date: $taskEndDate
 
                 );
                 if ($data['recurrence_type'] === 'daily') {
