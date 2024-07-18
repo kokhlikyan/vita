@@ -66,6 +66,9 @@ class TaskService
             $endDate = $data['end_date'] ?? Carbon::now()->addDays(90);
 
             while ($currentDate->lessThanOrEqualTo($endDate)) {
+                $taskEndDate = isset($data['all_day']) && $data['all_day']
+                    ? Carbon::parse($currentDate)->endOfDay()
+                    : Carbon::parse($currentDate)->addHour();
                 $tasks[] = new TaskDTO(
                     uuid: $uuid,
                     title: $data['title'],
