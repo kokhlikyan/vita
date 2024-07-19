@@ -284,7 +284,7 @@ class TaskController extends Controller
             ),
         ]
     )]
-    public function delete(TaskListQueryParamsRequest $request,$id): JsonResponse
+    public function delete(TaskListQueryParamsRequest $request, $id): JsonResponse
     {
         $deleted = $this->taskService->delete($id, $request->input('force', false));
         if (!$deleted) {
@@ -588,7 +588,7 @@ class TaskController extends Controller
             return response()->json([
                 'data' => TaskResource::collection($tasks)
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([
                 'message' => 'Bad request'
@@ -654,7 +654,7 @@ class TaskController extends Controller
                 'data' => TaskResource::collection($history),
                 'pagination' => new PaginatorResource($history)
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([
                 'message' => 'Bad request'
@@ -719,7 +719,7 @@ class TaskController extends Controller
                 'data' => TaskResource::collection($history),
                 'pagination' => new PaginatorResource($history)
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([
                 'message' => 'Bad request'
@@ -750,6 +750,13 @@ class TaskController extends Controller
                 required: false,
                 schema: new OA\Schema(type: "string", format: "date", example: "2024-01-01")
             ),
+            new OA\Parameter(
+                name: "today",
+                description: "Filter by today",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "boolean")
+            )
         ],
         responses: [
             new OA\Response(
@@ -780,12 +787,18 @@ class TaskController extends Controller
     public function getMissedTasks(TaskListQueryParamsRequest $request): JsonResponse
     {
         try {
-            $tasks = $this->taskService->getMissedTasks($request->validated());
+            $validated = $request->validated();
+            $tasks = $this->taskService->getMissedTasks($validated);
+            if (isset($validated['today']) && $validated['today']) {
+                return response()->json([
+                    'data' => TaskResource::collection($tasks),
+                ]);
+            }
             return response()->json([
                 'data' => TaskResource::collection($tasks),
                 'pagination' => new PaginatorResource($tasks)
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error(__METHOD__ . '->' . $e->getMessage());
             return response()->json([
                 'message' => 'Bad request'
