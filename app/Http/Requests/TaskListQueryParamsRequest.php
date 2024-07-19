@@ -30,6 +30,7 @@ class TaskListQueryParamsRequest extends FormRequest
             'page' => ['int', 'min:1'],
             'force' => ['boolean'],
             'type' => ['string', 'in:independent,goal,habit,block'],
+            'today' => ['boolean'],
         ];
     }
 

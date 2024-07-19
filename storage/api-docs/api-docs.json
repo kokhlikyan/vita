@@ -2017,6 +2017,15 @@
                             "format": "date",
                             "example": "2024-01-01"
                         }
+                    },
+                    {
+                        "name": "today",
+                        "in": "query",
+                        "description": "Filter by today",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
                     }
                 ],
                 "responses": {
