@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BlockQueryParamsRequest;
 use App\Http\Requests\CreateBlockRequest;
 use App\Http\Requests\UpdateBlockRequest;
 use App\Http\Resources\BlockResource;
@@ -65,6 +66,13 @@ class BlockController extends Controller
                 required: true,
                 schema: new OA\Schema(type: "integer")
             ),
+            new OA\Parameter(
+                name: "date",
+                description: "The date of the resource",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", format: "date")
+            )
         ],
         responses: [
             new OA\Response(
@@ -86,13 +94,13 @@ class BlockController extends Controller
             ),
         ]
     )]
-    public function findById(int $id): BlockResource | JsonResponse
+    public function findById(BlockQueryParamsRequest $request,int $id): BlockResource | JsonResponse
     {
-        $block = $this->blockService->find($id);
+        $block = $this->blockService->find($id, $request->validated());
         if ($block === null) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
-        return new BlockResource($block);
+        return new BlockResource($block,$request->validated());
     }
 
 
