@@ -13,7 +13,12 @@ class BlockRepository implements BlockRepositoryInterface
 
     public function all(int $user_id): Collection
     {
-        return Block::query()->where('user_id', $user_id)->get();
+        return Block::query()
+            ->join('tasks', 'blocks.id', '=', 'tasks.goal_id')
+            ->where('blocks.user_id', $user_id)
+            ->orderBy('tasks.start_date')
+            ->select('blocks.*')
+            ->get();
     }
 
     public function create(array $data): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder

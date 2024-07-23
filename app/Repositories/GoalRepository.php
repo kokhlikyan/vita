@@ -11,7 +11,12 @@ class GoalRepository implements  GoalRepositoryInterface
 {
     public function all(int $user_id): Collection
     {
-        return Goal::query()->where('user_id', $user_id)->get();
+        return Goal::query()
+            ->join('tasks', 'goals.id', '=', 'tasks.goal_id')
+            ->where('goals.user_id', $user_id)
+            ->orderBy('tasks.start_date')
+            ->select('goals.*')
+            ->get();
     }
 
     public function create(array $data): Model|Builder
