@@ -11,7 +11,12 @@ class HabitRepository implements  HabitRepositoryInterface
 {
     public function all(int $user_id): Collection
     {
-        return Habit::query()->where('user_id', $user_id)->get();
+        return Habit::query()
+            ->join('tasks', 'habits.id', '=', 'tasks.goal_id')
+            ->where('habits.user_id', $user_id)
+            ->orderBy('tasks.start_date')
+            ->select('habits.*')
+            ->get();
     }
 
     public function create(array $data): Model|Builder
