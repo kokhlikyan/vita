@@ -10,7 +10,7 @@ use OpenApi\Annotations as OA;
 class BlockResource extends JsonResource
 {
 
-    public function __construct($resource, protected $params)
+    public function __construct($resource, protected $params = [])
     {
         parent::__construct($resource);
     }
