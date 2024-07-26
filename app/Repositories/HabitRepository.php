@@ -12,10 +12,8 @@ class HabitRepository implements  HabitRepositoryInterface
     public function all(int $user_id): Collection
     {
         return Habit::query()
-            ->join('tasks', 'habits.id', '=', 'tasks.goal_id')
             ->where('habits.user_id', $user_id)
-            ->orderBy('tasks.start_date')
-            ->select('habits.*')
+            ->orderBy('created_at')
             ->get();
     }
 

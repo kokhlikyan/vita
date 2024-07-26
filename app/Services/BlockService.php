@@ -58,7 +58,6 @@ readonly class BlockService
         if (!$block) {
             return false;
         }
-        $this->taskRepository->recursiveDelete($block->tasks);
         return $this->blockRepository->update($data, $id);
     }
 }
