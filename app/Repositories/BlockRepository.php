@@ -14,10 +14,8 @@ class BlockRepository implements BlockRepositoryInterface
     public function all(int $user_id): Collection
     {
         return Block::query()
-            ->join('tasks', 'blocks.id', '=', 'tasks.goal_id')
             ->where('blocks.user_id', $user_id)
-            ->orderBy('tasks.start_date')
-            ->select('blocks.*')
+            ->orderByDesc('created_at')
             ->get();
     }
 
