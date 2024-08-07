@@ -124,6 +124,11 @@ class TaskService
         return $this->taskRepository->makeCompleted($id, auth()->user()->id);
     }
 
+    public function makeUrgent($id): bool
+    {
+        return $this->taskRepository->makeUrgent($id, auth()->user()->id);
+    }
+
     public function list($params)
     {
         $sortDayCount = (int)($params['sort'] ?? 1);

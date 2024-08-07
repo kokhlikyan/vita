@@ -59,6 +59,15 @@ class TaskRepository implements TaskRepositoryInterface
         return $task->save();
     }
 
+     public function makeUrgent($id, $user_id): bool
+    {
+        $task = Task::query()
+            ->where('user_id', $user_id)
+            ->find($id);
+        $task->urgent = !$task->urgent;
+        return $task->save();
+    }
+
     public function findAllWithBlock($user_id): Collection|array
     {
         return Task::query()
