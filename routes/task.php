@@ -20,5 +20,6 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{id}', 'delete');
             Route::put('/{id}', 'update');
             Route::patch('/{id}/completed', 'makeCompleted');
+            Route::patch('/{id}/urgent', 'makeUrgent');
         });
 });

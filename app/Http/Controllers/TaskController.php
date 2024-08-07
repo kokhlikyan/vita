@@ -806,4 +806,50 @@ class TaskController extends Controller
         }
     }
 
+    #[OA\Patch(
+        path: "/api/v1/tasks/{id}/urgent",
+        summary: "Mark task as completed or uncompleted",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Tasks"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "The ID of the resource",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Resource updated"
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Bad request"
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Resource not found"
+            ),
+        ]
+    )]
+    public function makeUrgent($id): JsonResponse
+    {
+        try {
+            $urgent = $this->taskService->makeUrgent($id);
+            if (!$urgent) {
+                return response()->json(['message' => 'Resource not found'], 404);
+            }
+            return response()->json(['message' => 'Resource updated']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        }
+    }
+
 }

@@ -31,6 +31,7 @@ class UpdateTaskRequest extends FormRequest
             'title' => ['string', 'max:255'],
             'details' => ['string'],
             'all_day' => ['boolean'],
+            'urgent' => ['urgent'],
             'recurrence_type' => ['string', Rule::in(array_column(RepeatTypes::cases(), 'value'))],
             'start_date' => ['date', 'after_or_equal:today'],
             'end_date' => ['date', 'after_or_equal:start_date'],

@@ -19,6 +19,7 @@ class Task extends Model
         return [
             'completed' => 'boolean',
             'all_day' => 'boolean',
+            'urgent' => 'boolean',
         ];
     }
 
