@@ -57,6 +57,7 @@ class TaskService
                 goal_id: $data['goal_id'] ?? null,
                 habit_id: $data['habit_id'] ?? null,
                 completed: $data['completed'] ?? false,
+                urgent: $data['urgent'] ?? false,
                 all_day: $data['all_day'] ?? false,
                 start_date: $data['start_date'] ?? now(),
                 end_date: $taskEndDate
@@ -78,6 +79,7 @@ class TaskService
                     goal_id: $data['goal_id'] ?? null,
                     habit_id: $data['habit_id'] ?? null,
                     completed: $data['completed'] ?? false,
+                    urgent: $data['urgent'] ?? false,
                     all_day: $data['all_day'] ?? false,
                     start_date: $currentDate->toDateTimeString(),
                     end_date: $taskEndDate
