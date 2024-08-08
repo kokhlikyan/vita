@@ -21,7 +21,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->where('user_id', $user_id)
             ->when($search, function ($query) use ($search) {
                 $query->where('title', 'like', "%$search%");
-            });
+            })->orderBy('urgent', 'desc');
         return $task->paginate($page);
     }
 
@@ -73,6 +73,7 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::query()
             ->where('user_id', $user_id)
             ->with('block')
+            ->orderBy('urgent', 'desc')
             ->get();
     }
 
@@ -104,14 +105,14 @@ class TaskRepository implements TaskRepositoryInterface
             })
             ->when($type === 'habit', function ($query) {
                 $query->whereHas('habit');
-            });
+            })->orderBy('urgent', 'desc');
 
         $blockQuery = Block::query()
             ->where('blocks.user_id', $user_id)
             ->with(['tasks' => function ($query) use ($startOfDay, $endOfDay, $sortDayCount) {
                 $query->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
                     $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
-                });
+                })->orderBy('urgent', 'desc');
             }])
             ->when($type === 'independent', function ($query) {
                 $query->whereHas('tasks', function ($query) {
@@ -158,7 +159,7 @@ class TaskRepository implements TaskRepositoryInterface
             })
             ->when($params['type'] === "habit", function ($query) use ($params) {
                 $query->whereHas('habit');
-            });
+            })->orderBy('urgent', 'desc');
         return $taskQuery->get();
     }
 
@@ -187,8 +188,10 @@ class TaskRepository implements TaskRepositoryInterface
 
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
-            ->withTrashed()
-            ->orderBy('start_date');
+            ->orderBy('urgent', 'desc')
+            ->orderBy('start_date')
+            ->withTrashed();
+
 
         return $query->paginate($params['page'] ?? null);
     }
@@ -204,6 +207,7 @@ class TaskRepository implements TaskRepositoryInterface
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
             ->withTrashed()
+            ->orderBy('urgent', 'desc')
             ->orderBy('start_date');
 
         return $query->paginate($params['page'] ?? null);

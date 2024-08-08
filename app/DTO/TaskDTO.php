@@ -15,6 +15,7 @@ class TaskDTO extends BaseDTO
         protected readonly ?int    $goal_id = null,
         protected readonly ?int    $habit_id = null,
         protected readonly ?bool   $completed = false,
+        protected readonly ?bool   $urgent = false,
         protected readonly ?bool   $all_day = false,
         protected readonly ?string $start_date = null,
         protected readonly ?string $end_date = null,
