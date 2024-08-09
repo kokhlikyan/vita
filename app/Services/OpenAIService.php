@@ -24,7 +24,7 @@ class OpenAIService
 
     }
 
-    private function post($userPrompt, $maxToken = 100)
+    private function post($userPrompt, $maxToken = 150)
     {
         $response = Http::timeout(120)->withHeaders([
             'Content-Type' => 'application/json',
@@ -86,8 +86,9 @@ class OpenAIService
             [{
                 title: title,
                 detail: detail,
+                urgent: true or false default false but when user ask for urgent/important task it should be true,
                 recurrence_type: only can be daily, weekly, monthly, and not required for one time task if not not need this field,
-                start_date: user local time example format 2024-01-01 20:15:00 start date must be greater than now { $now},
+                start_date: user local time example format 2024-01-01 20:15:00 start date must be greater than now { $now },
                 end_date: it is depend on dialog context example format 2024-01-01 20:15:00
                 and in case of recurring should be greater than start date depending on recurrence type
                 and I need seperated tasks for each recurring task for example if user ask for daily task for 5 days,
