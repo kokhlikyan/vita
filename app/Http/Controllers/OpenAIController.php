@@ -40,33 +40,38 @@ class OpenAIController extends Controller
     {
         set_time_limit(120);
         $user = auth()->user();
-        $type = $request->input('type');
+        $type = $request->input('type') ?? 'goal';
         $prompt = $request->input('prompt');
         $result = $this->service->finalizeDialog($type, $prompt);
-        Log::info(json_encode($result));
+        Log::info('MESSAGES ->->->->->' .json_encode($result['messages']));
+        Log::info('DATA ->->->->->' .json_encode($result['data']));
         $taskType = null;
         if ($type === 'goal') {
-            $taskType = $this->goalService->create([
+            $goal = $this->goalService->create([
                 'user_id' => $user->id,
                 'title' => $result['messages'][2]['content'],
                 'details' => $result['messages'][count($result['messages']) - 3]['content'],
             ]);
+            $taskType = [
+                'name' => 'goal_id',
+                'id' => $goal->id
+            ];
         } elseif ($type === 'habit') {
-           $taskType = $this->habitService->create([
+           $habit = $this->habitService->create([
                 'user_id' => $user->id,
                 'title' => $result['messages'][2]['content'],
                 'details' => $result['messages'][count($result['messages']) - 3]['content'],
             ]);
+           $taskType = [
+                'name' => 'habit_id',
+                'id' => $habit->id
+            ];
         }
         if ($result['data']){
             $data = [
                 'user_id' => $user->id,
+                $taskType['name'] => $taskType['id'],
             ];
-            if ($taskType === 'goal'){
-                $data['goal_id'] = $taskType->id;
-            } elseif ($taskType === 'habit'){
-                $data['habit_id'] = $taskType->id;
-            }
             foreach ($result['data'] as $res){
                 if (isset($data['recurrence_type'])){
                     $data['recurrence_type'] = $res['recurrence_type'];
@@ -75,6 +80,7 @@ class OpenAIController extends Controller
                 $data['details'] = $res['detail'];
                 $data['start_date'] = $res['start_date'];
                 $data['end_date'] = $res['end_date'];
+                $data['urgent'] = $res['urgent'] ?? false;
                 $this->taskService->create($data);
             }
         }
