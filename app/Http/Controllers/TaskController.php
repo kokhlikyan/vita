@@ -11,6 +11,7 @@ use App\Http\Resources\PaginatorResource;
 use App\Http\Resources\TaskListResource;
 use App\Http\Resources\TaskResource;
 use App\Models\User;
+use App\Services\OpenAIService;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -240,7 +241,7 @@ class TaskController extends Controller
             ),
         ]
     )]
-    public function create(CreateTaskRequest $request): JsonResponse
+    public function create(CreateTaskRequest $request, OpenAIService $openAIService): JsonResponse
     {
 
         $tasks = $this->taskService->create($request->validated());
