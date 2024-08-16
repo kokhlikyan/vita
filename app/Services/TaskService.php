@@ -110,6 +110,9 @@ class TaskService
     public function update(array $data, $id)
     {
         $task = $this->taskRepository->find($id, auth()->id());
+        if (isset($data['start_date'])){
+            $data['end_date'] = Carbon::parse($data['start_date'])->addHour();
+        }
         if (!$task) {
             return false;
         }
