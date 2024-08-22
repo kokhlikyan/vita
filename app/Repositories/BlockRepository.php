@@ -21,7 +21,25 @@ class BlockRepository implements BlockRepositoryInterface
 
     public function create(array $data): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
     {
-        return Block::query()->create($data);
+        return Block::query()->create([
+            'user_id' => $data['user_id'],
+            'uuid' => $data['uuid'],
+            'all_day' => $data['all_day'],
+            'repeat_every' => $data['repeat_every'] ?? null,
+            'repeat_type' => $data['repeat_type'] ?? null,
+            'repeat_on' => $data['repeat_on'] ?? null,
+            'day_of_week' => $data['day_of_week'],
+            'day_of_month' => $data['day_of_month'],
+            'month_of_year' => $data['month_of_year'],
+            'start_date' => $data['start_date'],
+            'from_time' => $data['from_time'] ?? null,
+            'to_time' => $data['to_time'] ?? null,
+            'end_date' => $data['end_date'] ?? null,
+            'exclude_dates' => $data['exclude_dates'] ?? [],
+            'end_on' => $data['end_on'] ?? null,
+            'end_after' => $data['end_after'] ?? null,
+            'color' => $data['color'] ?? '#4B5459',
+        ]);
     }
 
     public function update(array $data, $id): bool

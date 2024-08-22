@@ -487,47 +487,88 @@
                 "operationId": "576cceb20d0c7fc8e16fb2925b4cd38b",
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "type"
+                                    "title",
+                                    "start_date",
+                                    "all_day"
                                 ],
                                 "properties": {
                                     "title": {
+                                        "description": "The title of the block",
                                         "type": "string"
                                     },
                                     "details": {
+                                        "description": "Additional details about the block",
                                         "type": "string",
                                         "nullable": true
                                     },
-                                    "type": {
-                                        "description": "Type of the block should be one of the following: temporary, permanent, completed",
-                                        "type": "string"
+                                    "repeat_every": {
+                                        "description": "Repeat every specified interval",
+                                        "type": "integer",
+                                        "nullable": true
                                     },
-                                    "color": {
+                                    "repeat_type": {
+                                        "description": "Type of repetition (e.g., day, week)",
                                         "type": "string",
+                                        "nullable": true
+                                    },
+                                    "repeat_on": {
+                                        "description": "Days to repeat on (if applicable)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
                                         "nullable": true
                                     },
                                     "start_date": {
+                                        "description": "Must be greater than or equal to the now",
                                         "type": "string",
                                         "format": "date",
-                                        "example": "05.06.2024"
+                                        "example": "2024-06-05"
                                     },
                                     "end_date": {
+                                        "description": "The end date of the block",
                                         "type": "string",
                                         "format": "date",
-                                        "example": "05.06.2024"
+                                        "example": "2024-06-05",
+                                        "nullable": true
                                     },
-                                    "start_time": {
+                                    "from_time": {
+                                        "description": "Start time of the block",
                                         "type": "string",
                                         "format": "time",
                                         "example": "12:15"
                                     },
-                                    "end_time": {
+                                    "to_time": {
+                                        "description": "End time of the block",
                                         "type": "string",
                                         "format": "time",
                                         "example": "15:00"
+                                    },
+                                    "end_on": {
+                                        "description": "You can only provide one of the following: end_on, end_after",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-06-05",
+                                        "nullable": true
+                                    },
+                                    "end_after": {
+                                        "description": "You can only provide one of the following: end_on, end_after",
+                                        "type": "integer",
+                                        "example": 5,
+                                        "nullable": true
+                                    },
+                                    "color": {
+                                        "description": "Color associated with the block",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "all_day": {
+                                        "description": "Whether the block lasts all day",
+                                        "type": "boolean",
+                                        "default": false
                                     }
                                 },
                                 "type": "object"
@@ -2122,35 +2163,62 @@
                     "details": {
                         "type": "string"
                     },
-                    "type": {
-                        "description": "Type of the block should be one of the following: temporary, permanent, completed",
+                    "all_day": {
+                        "type": "boolean"
+                    },
+                    "repeat_every": {
+                        "type": "integer"
+                    },
+                    "repeat_type": {
                         "type": "string"
                     },
-                    "color": {
-                        "type": "string"
+                    "repeat_on": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     },
-                    "tasks": {
-                        "$ref": "#/components/schemas/TaskSchema"
+                    "day_of_week": {
+                        "type": "integer"
+                    },
+                    "day_of_month": {
+                        "type": "integer"
+                    },
+                    "month_of_year": {
+                        "type": "integer"
                     },
                     "start_date": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date"
+                    },
+                    "from_time": {
+                        "type": "string",
+                        "example": "09:00:00"
+                    },
+                    "to_time": {
+                        "type": "string",
+                        "example": "12:00:00"
                     },
                     "end_date": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date"
                     },
-                    "start_time": {
-                        "type": "string",
-                        "format": "time",
-                        "example": "12:00:00"
+                    "exclude_dates": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "date"
+                        }
                     },
-                    "end_time": {
+                    "end_on": {
                         "type": "string",
-                        "format": "time",
-                        "example": "12:00:00"
+                        "format": "date"
+                    },
+                    "end_after": {
+                        "type": "integer"
+                    },
+                    "color": {
+                        "type": "string"
                     },
                     "created_at": {
                         "type": "string",
