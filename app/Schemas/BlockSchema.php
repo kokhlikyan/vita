@@ -21,39 +21,75 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
-            property: 'type',
-            description: 'Type of the block should be one of the following: temporary, permanent, completed',
+            property: 'all_day',
+            type: 'boolean',
+        ),
+        new OA\Property(
+            property: 'repeat_every',
+            type: 'integer',
+        ),
+        new OA\Property(
+            property: 'repeat_type',
             type: 'string',
+        ),
+        new OA\Property(
+            property: 'repeat_on',
+            type: 'array',
+            items: new OA\Items(
+                type: 'integer',
+            ),
+        ),
+        new OA\Property(
+            property: 'day_of_week',
+            type: 'integer',
+        ),
+        new OA\Property(
+            property: 'day_of_month',
+            type: 'integer',
+        ),
+        new OA\Property(
+            property: 'month_of_year',
+            type: 'integer',
+        ),
+        new OA\Property(
+            property: 'start_date',
+            type: 'date',
+        ),
+        new OA\Property(
+            property: 'from_time',
+            type: 'string',
+            example: '09:00:00'
+        ),
+        new OA\Property(
+            property: 'to_time',
+            type: 'string',
+            example: '12:00:00'
+        ),
+        new OA\Property(
+            property: 'end_date',
+            type: 'string',
+            format: 'date',
+        ),
+        new OA\Property(
+            property: 'exclude_dates',
+            type: 'array',
+            items: new OA\Items(
+                type: 'string',
+                format: 'date',
+            ),
+        ),
+        new OA\Property(
+            property: 'end_on',
+            type: 'string',
+            format: 'date',
+        ),
+        new OA\Property(
+            property: 'end_after',
+            type: 'integer',
         ),
         new OA\Property(
             property: 'color',
             type: 'string',
-        ),
-        new OA\Property(
-            property: 'tasks',
-            ref: TaskSchema::class
-        ),
-        new OA\Property(
-            property: 'start_date',
-            type: 'datetime',
-            nullable: true
-        ),
-        new OA\Property(
-            property: 'end_date',
-            type: 'datetime',
-            nullable: true
-        ),
-        new OA\Property(
-            property: 'start_time',
-            type: 'string',
-            format: 'time',
-            example: '12:00:00'
-        ),
-        new OA\Property(
-            property: 'end_time',
-            type: 'string',
-            format: 'time',
-            example: '12:00:00'
         ),
         new OA\Property(
             property: 'created_at',
@@ -62,6 +98,13 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'updated_at',
             type: 'datetime',
+        ),
+        new OA\Property(
+            property: 'tasks',
+            type: 'array',
+            items: new OA\Items(
+                ref: '#/components/schemas/TaskSchema'
+            ),
         )
     ]
 )]

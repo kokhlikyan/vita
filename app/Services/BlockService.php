@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\BlockInfo;
 use App\Repositories\Interfaces\BlockRepositoryInterface;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,11 +30,20 @@ readonly class BlockService
 
     public function create(array $data)
     {
+        $data['day_of_week'] = Carbon::parse($data['start_date'])->dayOfWeek;
+        $data['day_of_month'] = Carbon::parse($data['start_date'])->day;
+        $data['month_of_year'] = Carbon::parse($data['start_date'])->month;
         $newBlock = $this->blockRepository->create($data);
+        BlockInfo::query()->create([
+            'block_id' => $newBlock->id,
+            'uuid' => $newBlock->uuid,
+            'title' => $data['title'],
+            'details' => $data['details'] ?? '',
+        ]);
         return $this->find($newBlock->id);
     }
 
-    public function delete(int $id): bool
+    public function delete(int $id, $data): bool
     {
         $block = $this->find($id);
         if (!$block) {
@@ -49,7 +60,7 @@ readonly class BlockService
                 }
             }
         }
-        return $this->blockRepository->delete($id);
+        return $this->blockRepository->delete($id, $data);
     }
 
     public function update(array $data, int $id): bool

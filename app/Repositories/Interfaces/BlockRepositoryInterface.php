@@ -10,7 +10,7 @@ interface BlockRepositoryInterface
 
     public function update(array $data, $id);
 
-    public function delete($id);
+    public function delete($id, $data);
 
     public function find($id, $user_id);
 

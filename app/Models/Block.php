@@ -25,4 +25,18 @@ class Block extends Model
             ->orderBy('start_date');
     }
 
+    protected function casts()
+    {
+        return [
+            'all_day' => 'boolean',
+            'exclude_dates' => 'array',
+            'repeat_on' => 'array',
+        ];
+    }
+
+    public function info()
+    {
+        return $this->hasOne(BlockInfo::class)->select('title', 'details');
+    }
+
 }

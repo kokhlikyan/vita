@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\BlockTypes;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AuthWithTokenRequest extends FormRequest
