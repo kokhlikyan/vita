@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\BlockTypes;
+use App\Enums\BlockRepeatTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,7 +23,7 @@ class UpdateBlockRequest extends FormRequest
      */
     public function rules(): array
     {
-        $blockTypesString = implode(',', array_column(BlockTypes::cases(), 'value'));
+        $blockTypesString = implode(',', array_column(BlockRepeatTypes::cases(), 'value'));
         return [
             'title' => ['string', 'max:255'],
             'details' => ['string'],

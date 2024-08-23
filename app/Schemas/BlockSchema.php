@@ -98,6 +98,13 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'updated_at',
             type: 'datetime',
+        ),
+        new OA\Property(
+            property: 'tasks',
+            type: 'array',
+            items: new OA\Items(
+                ref: '#/components/schemas/TaskSchema'
+            ),
         )
     ]
 )]

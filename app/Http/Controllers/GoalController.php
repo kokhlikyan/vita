@@ -144,11 +144,6 @@ class GoalController extends Controller
                                     example: false
                                 ),
                                 new OA\Property(
-                                    property: 'all_day',
-                                    type: 'boolean',
-                                    example: false
-                                ),
-                                new OA\Property(
                                     property: 'start_date',
                                     type: 'string',
                                     format: 'date',

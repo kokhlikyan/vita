@@ -30,7 +30,6 @@ class CreateBlockRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'details' => ['string'],
-            'all_day' => ['required', 'boolean'],
             'repeat_every' => ['integer', 'min:1'],
             'repeat_type' => ['string', 'max:255', 'in:' . $blockTypesString],
             'repeat_on' => ['array', 'max:7', 'min:1', 'in:0,1,2,3,4,5,6'],
@@ -42,13 +41,12 @@ class CreateBlockRequest extends FormRequest
                 'after_or_equal:today'
             ],
             'end_date' => [
-                'required_if:all_day,true',
                 'date',
                 'date_format:Y-m-d',
                 'after_or_equal:start_date'
             ],
-            'from_time' => ['required_if:all_day,false', 'date_format:H:i',  new AfterNowTime()],
-            'to_time' => ['required_if:all_day,false', 'date_format:H:i',  'after:from_time'],
+            'from_time' => ['required', 'date_format:H:i',  new AfterNowTime()],
+            'to_time' => ['required', 'date_format:H:i',  'after:from_time'],
             'color' => ['string', 'max:255'],
             'end_on' => ['date', 'date_format:Y-m-d'],
             'end_after' => ['integer', 'min:1',],

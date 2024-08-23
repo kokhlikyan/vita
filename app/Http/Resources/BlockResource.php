@@ -32,7 +32,6 @@ class BlockResource extends JsonResource
         return [
             'id' => $this->id,
             'info' => $this->info,
-            'all_day' => $this->all_day,
             'repeat_every' => $this->repeat_every,
             'repeat_type' => $this->repeat_type,
             'repeat_on' => $this->repeat_on,
@@ -40,6 +39,8 @@ class BlockResource extends JsonResource
             'day_of_month' => $this->day_of_month,
             'month_of_year' => $this->month_of_year,
             'start_date' => $this->start_date,
+            'start' => $this->start_date . ' ' . $this->from_time,
+            'end' => $this->end_date . ' ' . $this->to_time,
             'from_time' => $this->from_time,
             'to_time' => $this->to_time,
             'end_date' => $this->end_date,

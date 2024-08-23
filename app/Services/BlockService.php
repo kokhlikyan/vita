@@ -43,7 +43,7 @@ readonly class BlockService
         return $this->find($newBlock->id);
     }
 
-    public function delete(int $id): bool
+    public function delete(int $id, $data): bool
     {
         $block = $this->find($id);
         if (!$block) {
@@ -60,7 +60,7 @@ readonly class BlockService
                 }
             }
         }
-        return $this->blockRepository->delete($id);
+        return $this->blockRepository->delete($id, $data);
     }
 
     public function update(array $data, int $id): bool

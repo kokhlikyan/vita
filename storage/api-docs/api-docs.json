@@ -491,8 +491,7 @@
                             "schema": {
                                 "required": [
                                     "title",
-                                    "start_date",
-                                    "all_day"
+                                    "start_date"
                                 ],
                                 "properties": {
                                     "title": {
@@ -564,11 +563,6 @@
                                         "description": "Color associated with the block",
                                         "type": "string",
                                         "nullable": true
-                                    },
-                                    "all_day": {
-                                        "description": "Whether the block lasts all day",
-                                        "type": "boolean",
-                                        "default": false
                                     }
                                 },
                                 "type": "object"
@@ -774,6 +768,53 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of the block should be one of the following: all, this, following",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "The date of the resource",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_type",
+                        "in": "query",
+                        "description": "Type of the end date should be one of the following: on, after",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "The end date of the resource",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_after",
+                        "in": "query",
+                        "description": "The end after of the resource",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -863,10 +904,6 @@
                                                     "example": 1
                                                 },
                                                 "completed": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                },
-                                                "all_day": {
                                                     "type": "boolean",
                                                     "example": false
                                                 },
@@ -1134,10 +1171,6 @@
                                                     "example": 1
                                                 },
                                                 "completed": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                },
-                                                "all_day": {
                                                     "type": "boolean",
                                                     "example": false
                                                 },
@@ -2227,6 +2260,12 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskSchema"
+                        }
                     }
                 },
                 "type": "object"

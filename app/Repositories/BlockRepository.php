@@ -4,9 +4,11 @@ namespace App\Repositories;
 
 use App\Models\Block;
 use App\Repositories\Interfaces\BlockRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class BlockRepository implements BlockRepositoryInterface
 {
@@ -24,7 +26,6 @@ class BlockRepository implements BlockRepositoryInterface
         return Block::query()->create([
             'user_id' => $data['user_id'],
             'uuid' => $data['uuid'],
-            'all_day' => $data['all_day'],
             'repeat_every' => $data['repeat_every'] ?? null,
             'repeat_type' => $data['repeat_type'] ?? null,
             'repeat_on' => $data['repeat_on'] ?? null,
@@ -47,9 +48,36 @@ class BlockRepository implements BlockRepositoryInterface
         return Block::query()->find($id)->update($data);
     }
 
-    public function delete($id): bool
+    /**
+     * @throws ValidationException
+     */
+    public function delete($id, $data): bool
     {
-        return Block::destroy($id);
+        $block = Block::query()->find($id);
+        if (isset($data['type']) && $data['type'] === 'all') {
+            return Block::destroy($id);
+        } elseif (isset($data['type']) && $data['type'] === 'this') {
+            if (Carbon::parse($block->start_date) > Carbon::parse($data['date'])) {
+                throw ValidationException::withMessages(['message' => 'Cannot delete this event']);
+            }
+            if (in_array($data['date'], $block->exclude_dates)) {
+                return false;
+            }
+            $block->exclude_dates = array_merge($block->exclude_dates, [$data['date']]);
+            return $block->save();
+        } elseif (isset($data['type']) && $data['type'] === 'following') {
+            if (isset($data['end_date'])) {
+                $block->end_after = null;
+                $block->end_on = $data['end_date'];
+                return $block->save();
+            }
+            if (isset($data['end_after'])) {
+                $block->end_on = null;
+                $block->end_after = $data['end_after'];
+                return $block->save();
+            }
+        }
+        return false;
     }
 
     public function find($id, $user_id): Model|Collection|Builder|array|null
