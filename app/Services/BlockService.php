@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\BlockRepositoryInterface;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 readonly class BlockService
@@ -63,12 +64,8 @@ readonly class BlockService
         return $this->blockRepository->delete($id, $data);
     }
 
-    public function update(array $data, int $id): bool
+    public function update(array $data, int $id): Builder|array|Collection|Model
     {
-        $block = $this->find($id);
-        if (!$block) {
-            return false;
-        }
         return $this->blockRepository->update($data, $id);
     }
 }

@@ -25,7 +25,8 @@ class Task extends Model
 
     public function block(): BelongsTo
     {
-        return $this->belongsTo(Block::class)->select(['id', 'title', 'color']);
+        return $this->belongsTo(Block::class, 'block_id', 'uuid')
+            ->select(['id', 'uuid', 'color']);
     }
 
     public function goal(): BelongsTo

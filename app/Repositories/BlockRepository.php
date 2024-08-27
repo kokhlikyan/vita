@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Block;
+use App\Models\BlockInfo;
 use App\Repositories\Interfaces\BlockRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,10 +44,25 @@ class BlockRepository implements BlockRepositoryInterface
         ]);
     }
 
-    public function update(array $data, $id): bool
+    public function update(array $data, $id): Builder|array|Collection|Model
     {
-        return Block::query()->find($id)->update($data);
+        $type = $data['type'];
+        unset($data['type']);
+        $res = [];
+        switch ($type) {
+            case 'all':
+                $res = $this->updateAll($data, $id);
+                break;
+            case 'this':
+                $res = $this->updateThis($data, $id);
+                break;
+            case 'following':
+                $res = $this->updateFollowing($data, $id);
+                break;
+        }
+        return $res;
     }
+
 
     /**
      * @throws ValidationException
@@ -55,7 +71,12 @@ class BlockRepository implements BlockRepositoryInterface
     {
         $block = Block::query()->find($id);
         if (isset($data['type']) && $data['type'] === 'all') {
-            return Block::destroy($id);
+            $block = Block::query()->find($id);
+            $allBlocks = Block::query()->where('uuid', $block->uuid)->get();
+            foreach ($allBlocks as $block) {
+                $block->delete();
+            }
+            return true;
         } elseif (isset($data['type']) && $data['type'] === 'this') {
             if (Carbon::parse($block->start_date) > Carbon::parse($data['date'])) {
                 throw ValidationException::withMessages(['message' => 'Cannot delete this event']);
@@ -83,6 +104,90 @@ class BlockRepository implements BlockRepositoryInterface
     public function find($id, $user_id): Model|Collection|Builder|array|null
     {
         return Block::query()->where('user_id', $user_id)->find($id);
+    }
+
+    private function updateAll($data, $id): Builder|array|Collection|Model
+    {
+
+        $block = Block::query()->find($id);
+        $blockInfo = BlockInfo::query()->where('block_id', $id)->first();
+        $blockInfoData = [];
+        if (isset($data['title'])) {
+            $blockInfoData['title'] = $data['title'];
+        }
+        if (isset($data['details'])) {
+            $blockInfoData['details'] = $data['details'];
+        }
+        unset($data['title']);
+        unset($data['details']);
+        if (!empty($blockInfoData)) {
+            $blockInfo->update($blockInfoData);
+        }
+        if (!empty($data)) {
+            $block->update($data);
+        }
+        return $block;
+    }
+
+    private function updateThis($data, $id):  Builder|array|Collection|Model
+    {
+        $title = $data['title'] ?? null;
+        $details = $data['details'] ?? null;
+        unset($data['title']);
+        unset($data['details']);
+        $block = Block::query()->find($id);
+
+        $newBlock = $block->replicate();
+
+        foreach ($data as $key => $value) {
+            $newBlock->$key = $value;
+        }
+        $newBlock->save();
+        BlockInfo::query()->create([
+            'uuid' => $block->uuid,
+            'block_id' => $newBlock->id,
+            'title' => $title ?? $block->blockInfo->title,
+            'details' => $details ?? $block->blockInfo->details,
+        ]);
+        return $newBlock;
+
+    }
+
+    private function updateFollowing($data, $id): Builder|array|Collection|Model
+    {
+
+        $data['day_of_week'] = Carbon::parse($data['date'])->dayOfWeek;
+        $data['day_of_month'] = Carbon::parse($data['date'])->day;
+        $data['month_of_year'] = Carbon::parse($data['date'])->month;
+        $block = Block::query()->find($id);
+        $newBlock = $this->create([
+            'user_id' => $block->user_id,
+            'uuid' => $block->uuid,
+            'repeat_every' => $data['repeat_every'] ?? $block->repeat_every,
+            'repeat_type' => $data['repeat_type'] ?? $block->repeat_type,
+            'repeat_on' => $data['repeat_on'] ?? $block->repeat_on,
+            'day_of_week' => $data['day_of_week'],
+            'day_of_month' => $data['day_of_month'],
+            'month_of_year' => $data['month_of_year'],
+            'start_date' => $data['date'],
+            'from_time' => $data['from_time'] ?? $block->from_time,
+            'to_time' => $data['to_time'] ?? $block->to_time,
+            'end_date' => $data['end_date'] ?? $block->end_date,
+            'exclude_dates' => $data['exclude_dates'] ?? $block->exclude_dates,
+            'end_on' => $data['end_on'] ?? $block->end_on,
+            'end_after' => $data['end_after'] ?? $block->end_after,
+            'color' => $data['color'] ?? $block->color,
+
+        ]);
+        BlockInfo::query()->create([
+            'uuid' => $block->uuid,
+            'block_id' => $newBlock->id,
+            'title' => $data['title'] ?? $block->blockInfo->title,
+            'details' => $data['details'] ?? $block->blockInfo->details,
+        ]);
+        return $newBlock;
+
+
     }
 
 }

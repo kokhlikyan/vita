@@ -20,7 +20,7 @@ class Block extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class)
+        return $this->hasMany(Task::class, 'block_id', 'uuid')
             ->orderBy('urgent', 'desc')
             ->orderBy('start_date');
     }

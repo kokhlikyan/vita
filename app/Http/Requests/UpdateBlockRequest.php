@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\BlockRepeatTypes;
+use App\Rules\AfterNowTime;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -25,30 +26,36 @@ class UpdateBlockRequest extends FormRequest
     {
         $blockTypesString = implode(',', array_column(BlockRepeatTypes::cases(), 'value'));
         return [
+            'type' => ['required', 'string', 'in:this,all,following'],
+            'date' => ['required_if:type,following', 'date', 'date_format:Y-m-d'],
             'title' => ['string', 'max:255'],
             'details' => ['string'],
-            'type' => ['string', 'max:255', 'in:' . $blockTypesString],
+            'repeat_every' => ['integer', 'min:1'],
+            'repeat_type' => ['string', 'max:255', 'in:' . $blockTypesString],
+            'repeat_on' => ['array', 'max:7', 'min:1', 'in:0,1,2,3,4,5,6'],
+            'repeat_on.*' => ['integer', 'min:0', 'max:6'],
             'start_date' => [
-                'required_if:type,temporary',
                 'date',
                 'date_format:Y-m-d',
-                'after:now', // 'start_date' must be greater than or equal to today
+                'after_or_equal:today'
             ],
             'end_date' => [
-                'required_if:type,temporary',
                 'date',
                 'date_format:Y-m-d',
-                'after:start_date', // 'end_date' must be greater than 'start_date
+                'after_or_equal:start_date'
             ],
-            'start_time' => ['date_format:H:i'],
-            'end_time' => ['date_format:H:i',  'after:start_time'],
+            'from_time' => ['date_format:H:i', new AfterNowTime()],
+            'to_time' => ['date_format:H:i', 'after:from_time'],
             'color' => ['string', 'max:255'],
+            'end_on' => ['date', 'date_format:Y-m-d'],
+            'end_after' => ['integer', 'min:1',],
         ];
     }
+
     public function messages(): array
     {
         return [
-            'type.in' => 'The :attribute must be one of the following values: ' . implode(',', array_column(BlockTypes::cases(), 'value')),
+            'type.in' => 'The :attribute must be one of the following values: ' . implode(',', array_column(BlockRepeatTypes::cases(), 'value')),
         ];
     }
 }
