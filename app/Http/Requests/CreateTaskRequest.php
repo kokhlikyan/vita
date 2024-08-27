@@ -26,7 +26,7 @@ class CreateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'block_id' => ['integer', 'exists:blocks,id'],
+            'block_id' => ['uuid', 'exists:blocks,uuid'],
             'goal_id' => ['integer', 'exists:goals,id', new EitherGoalOrHabit],
             'habit_id' => ['integer', 'exists:habits,id', new EitherGoalOrHabit],
             'title' => ['required', 'string', 'max:255'],

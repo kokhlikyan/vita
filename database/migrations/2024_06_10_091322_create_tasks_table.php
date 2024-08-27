@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('block_id')->nullable();
+            $table->uuid('block_id')->nullable();
             $table->integer('goal_id')->nullable()->comment('can choose one of these goals or habits');
             $table->integer('habit_id')->nullable()->comment('can choose one of these goals or habits');
             $table->string('title');

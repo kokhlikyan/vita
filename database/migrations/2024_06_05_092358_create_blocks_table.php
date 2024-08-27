@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('blocks', function (Blueprint $table) {
             $table->id();
-            $table->uuid()->unique();
+            $table->uuid();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->integer('repeat_every')->nullable();
             $table->enum('repeat_type', BlockRepeatTypes::getValues())->nullable();

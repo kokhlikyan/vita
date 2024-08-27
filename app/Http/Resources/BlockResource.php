@@ -31,6 +31,7 @@ class BlockResource extends JsonResource
         }
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'info' => $this->info,
             'repeat_every' => $this->repeat_every,
             'repeat_type' => $this->repeat_type,
