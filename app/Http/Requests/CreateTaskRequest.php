@@ -26,16 +26,13 @@ class CreateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'block_id' => ['uuid', 'exists:blocks,uuid'],
+            'block_id' => ['integer', 'exists:blocks,id'],
             'goal_id' => ['integer', 'exists:goals,id', new EitherGoalOrHabit],
             'habit_id' => ['integer', 'exists:habits,id', new EitherGoalOrHabit],
             'title' => ['required', 'string', 'max:255'],
             'details' => ['string'],
-            'all_day' => ['boolean'],
             'urgent' => ['boolean'],
-            'recurrence_type' => ['string', Rule::in(array_column(RepeatTypes::cases(), 'value'))],
-            'start_date' => ['date', 'after_or_equal:today'],
-            'end_date' => ['date', 'after_or_equal:start_date'],
+            'start_date' => ['required_if:block_id,!null', 'date', 'after_or_equal:today'],
 
         ];
     }

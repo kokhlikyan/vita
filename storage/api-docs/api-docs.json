@@ -835,20 +835,10 @@
                     {
                         "name": "end_type",
                         "in": "query",
-                        "description": "Type of the end date should be one of the following: on, after",
+                        "description": "Type of the end date should be one of the following: on, after, never",
                         "required": false,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "description": "The end date of the resource",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
                         }
                     },
                     {
@@ -1574,20 +1564,7 @@
                                         "type": "boolean",
                                         "example": false
                                     },
-                                    "all_day": {
-                                        "type": "boolean",
-                                        "example": false
-                                    },
-                                    "recurrence_type": {
-                                        "type": "boolean",
-                                        "example": "daily|weekly|monthly"
-                                    },
                                     "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2022-06-10"
-                                    },
-                                    "end_date": {
                                         "type": "string",
                                         "format": "date",
                                         "example": "2022-06-10"
@@ -1719,16 +1696,7 @@
                                         "type": "boolean",
                                         "example": false
                                     },
-                                    "all_day": {
-                                        "type": "boolean",
-                                        "example": false
-                                    },
                                     "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2022-06-10"
-                                    },
-                                    "end_date": {
                                         "type": "string",
                                         "format": "date",
                                         "example": "2022-06-10"
@@ -1782,15 +1750,6 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "force",
-                        "in": "query",
-                        "description": "Force delete",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
                         }
                     }
                 ],
@@ -2255,15 +2214,6 @@
                             "type": "integer"
                         }
                     },
-                    "day_of_week": {
-                        "type": "integer"
-                    },
-                    "day_of_month": {
-                        "type": "integer"
-                    },
-                    "month_of_year": {
-                        "type": "integer"
-                    },
                     "start_date": {
                         "type": "string",
                         "format": "date"
@@ -2279,13 +2229,6 @@
                     "end_date": {
                         "type": "string",
                         "format": "date"
-                    },
-                    "exclude_dates": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "date"
-                        }
                     },
                     "end_on": {
                         "type": "string",

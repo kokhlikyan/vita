@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('goals_color')->default('#4CAF50');
             $table->string('habits_color')->default('#448AFF');
+            $table->string('blocks_color')->default('#009688');
             $table->timestamps();
         });
     }

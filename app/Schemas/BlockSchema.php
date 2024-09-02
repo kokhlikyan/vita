@@ -40,18 +40,6 @@ use OpenApi\Attributes as OA;
             ),
         ),
         new OA\Property(
-            property: 'day_of_week',
-            type: 'integer',
-        ),
-        new OA\Property(
-            property: 'day_of_month',
-            type: 'integer',
-        ),
-        new OA\Property(
-            property: 'month_of_year',
-            type: 'integer',
-        ),
-        new OA\Property(
             property: 'start_date',
             type: 'date',
         ),
@@ -69,14 +57,6 @@ use OpenApi\Attributes as OA;
             property: 'end_date',
             type: 'string',
             format: 'date',
-        ),
-        new OA\Property(
-            property: 'exclude_dates',
-            type: 'array',
-            items: new OA\Items(
-                type: 'string',
-                format: 'date',
-            ),
         ),
         new OA\Property(
             property: 'end_on',

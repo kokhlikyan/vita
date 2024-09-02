@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Block extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $guarded = [];
     /**
@@ -20,7 +20,7 @@ class Block extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class, 'block_id', 'uuid')
+        return $this->hasMany(Task::class)
             ->orderBy('urgent', 'desc')
             ->orderBy('start_date');
     }
@@ -29,14 +29,8 @@ class Block extends Model
     {
         return [
             'all_day' => 'boolean',
-            'exclude_dates' => 'array',
             'repeat_on' => 'array',
         ];
-    }
-
-    public function info()
-    {
-        return $this->hasOne(BlockInfo::class)->select('title', 'details');
     }
 
 }

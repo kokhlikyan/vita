@@ -31,80 +31,33 @@ class TaskService
     public function create(array $data)
     {
         $user = auth()->user();
-        $tasks = $this->generateTaskList($data, $user->id);
-        $newTasks = [];
-        foreach ($tasks as $task) {
-            $newTasks[] = $this->taskRepository->create($task->toArray());
+        $start_date = null;
+        $end_date = null;
+        if (isset($data['start_date'])){
+            $start_date = Carbon::parse($data['start_date']);
+            $end_date = Carbon::parse($data['start_date'])->addHour();
         }
-
-        return $newTasks;
-    }
-
-    private function generateTaskList(array $data, $userID): array
-    {
-        $tasks = [];
-        $uuid = Str::uuid();
-        $taskEndDate = isset($data['all_day']) && $data['all_day']
-            ? Carbon::parse($data['start_date'])->endOfDay()
-            : Carbon::parse($data['start_date'])->addHour();
-        if (!isset($data['recurrence_type'])) {
-            $tasks[] = new TaskDTO(
-                uuid: $uuid,
-                title: $data['title'],
-                user_id: $userID,
-                details: $data['details'] ?? '',
-                block_id: $data['block_id'] ?? null,
-                goal_id: $data['goal_id'] ?? null,
-                habit_id: $data['habit_id'] ?? null,
-                completed: $data['completed'] ?? false,
-                urgent: $data['urgent'] ?? false,
-                all_day: $data['all_day'] ?? false,
-                start_date: $data['start_date'] ?? now(),
-                end_date: $taskEndDate
-            );
-        } else {
-            $currentDate = Carbon::parse($data['start_date'] ?? Carbon::now()->addMonth(3));
-            $endDate = $data['end_date'] ?? Carbon::now()->addDays(90);
-
-            while ($currentDate->lessThanOrEqualTo($endDate)) {
-                $taskEndDate = isset($data['all_day']) && $data['all_day']
-                    ? Carbon::parse($currentDate)->endOfDay()
-                    : Carbon::parse($currentDate)->addHour();
-                $tasks[] = new TaskDTO(
-                    uuid: $uuid,
+        $task = new TaskDTO(
                     title: $data['title'],
-                    user_id: $userID,
+                    user_id: $user->id,
                     details: $data['details'] ?? '',
                     block_id: $data['block_id'] ?? null,
                     goal_id: $data['goal_id'] ?? null,
                     habit_id: $data['habit_id'] ?? null,
                     completed: $data['completed'] ?? false,
                     urgent: $data['urgent'] ?? false,
-                    all_day: $data['all_day'] ?? false,
-                    start_date: $currentDate->toDateTimeString(),
-                    end_date: $taskEndDate
-
+                    start_date: $start_date,
+                    end_date: $end_date
                 );
-                if ($data['recurrence_type'] === 'daily') {
-                    $currentDate->addDay();
-                } elseif ($data['recurrence_type'] === 'weekly') {
-                    $currentDate->addWeek();
-                } elseif ($data['recurrence_type'] === 'monthly') {
-                    if ($currentDate->day == $data['day_of_month']) {
-                        $currentDate->addMonth();
-                    } else {
-                        $currentDate->addDay();
-                    }
-                }
-            }
-        }
 
-        return $tasks;
+
+        return $this->taskRepository->create($task->toArray());
     }
 
-    public function delete($id, $force): bool
+
+    public function delete($id): bool
     {
-        return $this->taskRepository->delete($id, auth()->id(), $force);
+        return $this->taskRepository->delete($id, auth()->id());
     }
 
     public function update(array $data, $id)

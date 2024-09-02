@@ -4,11 +4,13 @@ namespace App\Repositories;
 
 use App\Models\Block;
 use App\Models\BlockInfo;
+use App\Models\Task;
 use App\Repositories\Interfaces\BlockRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
 class BlockRepository implements BlockRepositoryInterface
@@ -26,18 +28,15 @@ class BlockRepository implements BlockRepositoryInterface
     {
         return Block::query()->create([
             'user_id' => $data['user_id'],
-            'uuid' => $data['uuid'],
-            'repeat_every' => $data['repeat_every'] ?? null,
+            'title' => $data['title'],
+            'details' => $data['details'] ?? null,
+            'repeat_every' => $data['repeat_every'] ?? 1,
             'repeat_type' => $data['repeat_type'] ?? null,
             'repeat_on' => $data['repeat_on'] ?? null,
-            'day_of_week' => $data['day_of_week'],
-            'day_of_month' => $data['day_of_month'],
-            'month_of_year' => $data['month_of_year'],
             'start_date' => $data['start_date'],
             'from_time' => $data['from_time'] ?? null,
             'to_time' => $data['to_time'] ?? null,
             'end_date' => $data['end_date'] ?? null,
-            'exclude_dates' => $data['exclude_dates'] ?? [],
             'end_on' => $data['end_on'] ?? null,
             'end_after' => $data['end_after'] ?? null,
             'color' => $data['color'] ?? '#4B5459',
@@ -72,31 +71,68 @@ class BlockRepository implements BlockRepositoryInterface
         $block = Block::query()->find($id);
         if (isset($data['type']) && $data['type'] === 'all') {
             $block = Block::query()->find($id);
-            $allBlocks = Block::query()->where('uuid', $block->uuid)->get();
-            foreach ($allBlocks as $block) {
-                $block->delete();
+            $tasks = Task::query()->where('block_id', $id)->get();
+            if ($tasks->count() > 0) {
+                foreach ($tasks as $task) {
+                    $task->delete();
+                }
             }
-            return true;
+            return  $block->delete();
         } elseif (isset($data['type']) && $data['type'] === 'this') {
             if (Carbon::parse($block->start_date) > Carbon::parse($data['date'])) {
                 throw ValidationException::withMessages(['message' => 'Cannot delete this event']);
             }
-            if (in_array($data['date'], $block->exclude_dates)) {
-                return false;
+            $tasks = Task::query()->where('block_id', $id)->get();
+            $blockData = Arr::except($block->toArray(), ['id', 'created_at', 'updated_at']);
+            $formatedDates = $this->getBlockDates($block, $data['date']);
+            $prevBlockData = $blockData;
+            $nextBlockData = $blockData;
+            if ($blockData['end_on']){
+                $prevBlockData['end_on'] = $formatedDates['prev_date'];
+                $nextBlockData['start_date'] = $formatedDates['next_date'];
+            }elseif ($blockData['end_after']){
+                $prevBlockData['end_after'] = $data['end_after'];
+                $nextBlockData['start_date'] = $formatedDates['next_date'];
+            }else{
+                $prevBlockData['end_on'] = $formatedDates['prev_date'];
+                $nextBlockData['start_date'] = $formatedDates['next_date'];
             }
-            $block->exclude_dates = array_merge($block->exclude_dates, [$data['date']]);
-            return $block->save();
+            $prevBlock = Block::query()->create($prevBlockData);
+            $nextBlock = Block::query()->create($nextBlockData);
+            foreach ($tasks as $task) {
+                $taskData = Arr::except($task->toArray(), ['id', 'created_at', 'updated_at']);
+                $prevBlockTaskData = $taskData;
+                $nextBlockTaskData = $taskData;
+                $prevBlockTaskData['block_id'] = $prevBlock->id;
+                $nextBlockTaskData['block_id'] = $nextBlock->id;
+                Task::query()->create($prevBlockTaskData);
+                Task::query()->create($nextBlockTaskData);
+                $task->delete();
+            }
+            return $block->delete();
         } elseif (isset($data['type']) && $data['type'] === 'following') {
-            if (isset($data['end_date'])) {
-                $block->end_after = null;
-                $block->end_on = $data['end_date'];
-                return $block->save();
+            $tasks = Task::query()->where('block_id', $id)->get();
+            $blockData = Arr::except($block->toArray(), ['id', 'created_at', 'updated_at']);
+            $formatedDates = $this->getBlockDates($block, $data['date']);
+            $newBlockData = $blockData;
+            if (Carbon::parse($block->start_date) > Carbon::parse($formatedDates['prev_date'])) {
+                return $block->delete();
             }
-            if (isset($data['end_after'])) {
-                $block->end_on = null;
-                $block->end_after = $data['end_after'];
-                return $block->save();
+            if ($blockData['end_on']) {
+                $newBlockData['end_on'] = $formatedDates['prev_date'];
+            }elseif ($blockData['end_after']){
+                $newBlockData['end_after'] = $data['end_after'];
+            }else{
+                $newBlockData['end_on'] = $formatedDates['prev_date'];
             }
+            $newBlock = Block::query()->create($newBlockData);
+            foreach ($tasks as $task) {
+                $taskData = Arr::except($task->toArray(), ['id', 'created_at', 'updated_at']);
+                $taskData['block_id'] = $newBlock->id;
+                Task::query()->create($taskData);
+                $task->delete();
+            }
+            return $block->delete();
         }
         return false;
     }
@@ -143,12 +179,6 @@ class BlockRepository implements BlockRepositoryInterface
             $newBlock->$key = $value;
         }
         $newBlock->save();
-        BlockInfo::query()->create([
-            'uuid' => $block->uuid,
-            'block_id' => $newBlock->id,
-            'title' => $title ?? $block->blockInfo->title,
-            'details' => $details ?? $block->blockInfo->details,
-        ]);
         return $newBlock;
 
     }
@@ -156,13 +186,9 @@ class BlockRepository implements BlockRepositoryInterface
     private function updateFollowing($data, $id): Builder|array|Collection|Model
     {
 
-        $data['day_of_week'] = Carbon::parse($data['date'])->dayOfWeek;
-        $data['day_of_month'] = Carbon::parse($data['date'])->day;
-        $data['month_of_year'] = Carbon::parse($data['date'])->month;
         $block = Block::query()->find($id);
         $newBlock = $this->create([
             'user_id' => $block->user_id,
-            'uuid' => $block->uuid,
             'repeat_every' => $data['repeat_every'] ?? $block->repeat_every,
             'repeat_type' => $data['repeat_type'] ?? $block->repeat_type,
             'repeat_on' => $data['repeat_on'] ?? $block->repeat_on,
@@ -179,15 +205,40 @@ class BlockRepository implements BlockRepositoryInterface
             'color' => $data['color'] ?? $block->color,
 
         ]);
-        BlockInfo::query()->create([
-            'uuid' => $block->uuid,
-            'block_id' => $newBlock->id,
-            'title' => $data['title'] ?? $block->blockInfo->title,
-            'details' => $data['details'] ?? $block->blockInfo->details,
-        ]);
         return $newBlock;
 
 
     }
+
+    private function getBlockDates($block, $date): array
+    {
+        $result = [
+            'prev_date' => null,
+            'next_date' => null,
+        ];
+        switch ($block->repeat_type) {
+            case 'day':
+
+                $result['prev_date'] = Carbon::parse($date)->subDays(1 * $block->repeat_every);
+                $result['next_date'] = Carbon::parse($date)->addDays(1 * $block->repeat_every);
+                break;
+            case 'week':
+                $result['prev_date'] = Carbon::parse($date)->subWeeks(1 * $block->repeat_every);
+                $result['next_date'] = Carbon::parse($date)->addWeeks(1 * $block->repeat_every);
+                break;
+            case 'month':
+                $result['prev_date'] = Carbon::parse($date)->subMonths(1 * $block->repeat_every);
+                $result['next_date'] = Carbon::parse($date)->addMonths(1 * $block->repeat_every);
+                break;
+            case 'year':
+                $result['prev_date'] = Carbon::parse($date)->subYears(1 * $block->repeat_every);
+                $result['next_date'] = Carbon::parse($date)->addYears(1 * $block->repeat_every);
+                break;
+        }
+
+        return $result;
+
+    }
+
 
 }

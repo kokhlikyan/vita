@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $guarded = [];
 
@@ -18,15 +18,13 @@ class Task extends Model
     {
         return [
             'completed' => 'boolean',
-            'all_day' => 'boolean',
             'urgent' => 'boolean',
         ];
     }
 
     public function block(): BelongsTo
     {
-        return $this->belongsTo(Block::class, 'block_id', 'uuid')
-            ->select(['id', 'uuid', 'color']);
+        return $this->belongsTo(Block::class) ->select(['id', 'title']);
     }
 
     public function goal(): BelongsTo

@@ -31,16 +31,7 @@ readonly class BlockService
 
     public function create(array $data)
     {
-        $data['day_of_week'] = Carbon::parse($data['start_date'])->dayOfWeek;
-        $data['day_of_month'] = Carbon::parse($data['start_date'])->day;
-        $data['month_of_year'] = Carbon::parse($data['start_date'])->month;
         $newBlock = $this->blockRepository->create($data);
-        BlockInfo::query()->create([
-            'block_id' => $newBlock->id,
-            'uuid' => $newBlock->uuid,
-            'title' => $data['title'],
-            'details' => $data['details'] ?? '',
-        ]);
         return $this->find($newBlock->id);
     }
 
@@ -49,17 +40,6 @@ readonly class BlockService
         $block = $this->find($id);
         if (!$block) {
             return false;
-        }
-        $tasks = $block->tasks;
-        if ($tasks->count() > 0) {
-            foreach ($tasks as $task) {
-                $task->delete();
-                if (!$task->completed){
-                    $task->forceDelete();
-                }else{
-                    $task->delete();
-                }
-            }
         }
         return $this->blockRepository->delete($id, $data);
     }

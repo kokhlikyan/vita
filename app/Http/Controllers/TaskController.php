@@ -196,23 +196,7 @@ class TaskController extends Controller
                         example: false
                     ),
                     new OA\Property(
-                        property: 'all_day',
-                        type: 'boolean',
-                        example: false
-                    ),
-                    new OA\Property(
-                        property: 'recurrence_type',
-                        type: 'boolean',
-                        example: 'daily|weekly|monthly'
-                    ),
-                    new OA\Property(
                         property: 'start_date',
-                        type: 'string',
-                        format: 'date',
-                        example: '2022-06-10'
-                    ),
-                    new OA\Property(
-                        property: 'end_date',
                         type: 'string',
                         format: 'date',
                         example: '2022-06-10'
@@ -244,9 +228,9 @@ class TaskController extends Controller
     public function create(CreateTaskRequest $request, OpenAIService $openAIService): JsonResponse
     {
 
-        $tasks = $this->taskService->create($request->validated());
+        $task = $this->taskService->create($request->validated());
         return response()->json([
-            'data' => TaskResource::collection($tasks)
+            'data' => new TaskResource($task)
         ], 201);
     }
 
@@ -266,13 +250,6 @@ class TaskController extends Controller
                 required: true,
                 schema: new OA\Schema(type: "integer")
             ),
-            new OA\Parameter(
-                name: "force",
-                description: "Force delete",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "boolean")
-            ),
         ],
         responses: [
             new OA\Response(
@@ -287,7 +264,7 @@ class TaskController extends Controller
     )]
     public function delete(TaskListQueryParamsRequest $request, $id): JsonResponse
     {
-        $deleted = $this->taskService->delete($id, $request->input('force', false));
+        $deleted = $this->taskService->delete($id);
         if (!$deleted) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
@@ -336,18 +313,7 @@ class TaskController extends Controller
                         example: false
                     ),
                     new OA\Property(
-                        property: 'all_day',
-                        type: 'boolean',
-                        example: false
-                    ),
-                    new OA\Property(
                         property: 'start_date',
-                        type: 'string',
-                        format: 'date',
-                        example: '2022-06-10'
-                    ),
-                    new OA\Property(
-                        property: 'end_date',
                         type: 'string',
                         format: 'date',
                         example: '2022-06-10'

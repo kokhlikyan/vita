@@ -35,14 +35,13 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::query()->find($id)->update($data);
     }
 
-    public function delete($id, $user_id, $force): bool
+    public function delete($id, $user_id): bool
     {
-        $task = Task::query()->where('user_id', $user_id)
-            ->withTrashed()->find($id);
+        $task = Task::query()->where('user_id', $user_id)->find($id);
 
         if (!$task) return false;
 
-        return $force ? $task->forceDelete() : $task->delete();
+        return $task->delete();
     }
 
     public function find($id, $user_id): Model|Collection|Builder|array|null
@@ -189,8 +188,7 @@ class TaskRepository implements TaskRepositoryInterface
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
             ->orderBy('urgent', 'desc')
-            ->orderBy('start_date')
-            ->withTrashed();
+            ->orderBy('start_date');
 
 
         return $query->paginate($params['page'] ?? null);
@@ -206,7 +204,6 @@ class TaskRepository implements TaskRepositoryInterface
 
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             })
-            ->withTrashed()
             ->orderBy('urgent', 'desc')
             ->orderBy('start_date');
 

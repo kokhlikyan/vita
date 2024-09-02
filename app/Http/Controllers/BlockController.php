@@ -173,7 +173,6 @@ class BlockController extends Controller
             }
             $data = [
                 'user_id' => auth()->user()->id,
-                'uuid' => Str::uuid()->toString(),
                 ...$request->validated()
             ];
             $block = $this->blockService->create($data);
@@ -217,17 +216,10 @@ class BlockController extends Controller
             ),
             new OA\Parameter(
                 name: "end_type",
-                description: "Type of the end date should be one of the following: on, after",
+                description: "Type of the end date should be one of the following: on, after, never",
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "string")
-            ),
-            new OA\Parameter(
-                name: "end_date",
-                description: "The end date of the resource",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", format: "date")
             ),
             new OA\Parameter(
                 name: "end_after",
@@ -253,10 +245,11 @@ class BlockController extends Controller
         try {
             $request->validate([
                 'type' => 'required|string|in:all,this,following',
-                'date' => 'required_if:type,this|date',
-                'end_type' => 'required_if:type,following|string|in:on,after',
-                'end_date' => 'required_if:end_type,on|date',
+                'end_type' => 'required_unless:type,all|string|in:on,after,never',
+                'date' => 'required|date',
                 'end_after' => 'required_if:end_type,after|integer',
+            ], [
+                'end_type.in' => 'You can only provide one of the following: on, after',
             ]);
             $deleted = $this->blockService->delete($id, $request->all());
             if (!$deleted) {
