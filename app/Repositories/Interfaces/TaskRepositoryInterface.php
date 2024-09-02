@@ -10,7 +10,7 @@ interface TaskRepositoryInterface
 
     public function update(array $data, $id);
 
-    public function delete($id, $user_id, $force);
+    public function delete($id, $user_id);
 
     public function find($id, $user_id);
 

@@ -17,17 +17,11 @@ class TaskResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'block' => [
-                'id' => $this->block->id,
-                'uuid' => $this->block->uuid,
-                'color' => $this->block->color,
-                'info' => $this->block->info,
-            ],
+            'block' => $this->block,
             'goal' => $this->goal,
             'habit' => $this->habit,
             'title' => $this->title,
             'details' => $this->details,
-            'all_day' => $this->all_day,
             'start' => $this->start_date,
             'end' => $this->end_date,
             'completed' => $this->completed,
