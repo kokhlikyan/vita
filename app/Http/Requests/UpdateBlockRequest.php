@@ -27,7 +27,7 @@ class UpdateBlockRequest extends FormRequest
         $blockTypesString = implode(',', array_column(BlockRepeatTypes::cases(), 'value'));
         return [
             'type' => ['required', 'string', 'in:this,all,following'],
-            'date' => ['required_if:type,following', 'date', 'date_format:Y-m-d'],
+            'date' => ['required_unless:type,all', 'date', 'date_format:Y-m-d'],
             'title' => ['string', 'max:255'],
             'details' => ['string'],
             'repeat_every' => ['integer', 'min:1'],
@@ -44,7 +44,7 @@ class UpdateBlockRequest extends FormRequest
                 'date_format:Y-m-d',
                 'after_or_equal:start_date'
             ],
-            'from_time' => ['date_format:H:i', new AfterNowTime()],
+            'from_time' => ['date_format:H:i'],
             'to_time' => ['date_format:H:i', 'after:from_time'],
             'color' => ['string', 'max:255'],
             'end_on' => ['date', 'date_format:Y-m-d'],
