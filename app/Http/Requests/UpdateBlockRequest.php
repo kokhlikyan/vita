@@ -29,7 +29,7 @@ class UpdateBlockRequest extends FormRequest
             'type' => ['required', 'string', 'in:this,all,following'],
             'date' => ['required_unless:type,all', 'date', 'date_format:Y-m-d'],
             'title' => ['string', 'max:255'],
-            'details' => ['string'],
+            'details' => ['nullable', 'string'],
             'repeat_every' => ['integer', 'min:1'],
             'repeat_type' => ['string', 'max:255', 'in:' . $blockTypesString],
             'repeat_on' => ['array', 'max:7', 'min:1', 'in:0,1,2,3,4,5,6'],

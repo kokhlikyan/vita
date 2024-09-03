@@ -23,7 +23,7 @@ class UpdateGoalRequest extends FormRequest
     {
         return [
             'title' => ['string', 'max:255'],
-            'details' => ['string'],
+            'details' => ['nullable', 'string'],
         ];
     }
 }

@@ -25,7 +25,7 @@ class CreateGoalRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'details' => ['string'],
+             'details' => ['nullable', 'string'],
             'tasks' => ['array'],
             'tasks.*.title' => ['required', 'string', 'max:255'],
             'tasks.*.details' => ['string'],

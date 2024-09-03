@@ -29,7 +29,7 @@ class UpdateTaskRequest extends FormRequest
             'goal_id' => ['integer', 'exists:goals,id', new EitherGoalOrHabit],
             'habit_id' => ['integer', 'exists:habits,id', new EitherGoalOrHabit],
             'title' => ['string', 'max:255'],
-            'details' => ['string'],
+            'details' => ['nullable', 'string'],
             'urgent' => ['urgent'],
             'start_date' => ['date', 'after_or_equal:today'],
         ];
