@@ -45,28 +45,96 @@ class BlockRepository implements BlockRepositoryInterface
 
     public function update(array $data, $id): Builder|array|Collection|Model
     {
+        $block = Block::query()->find($id);
+        $tasks = Task::query()->where('block_id', $id)->get();
+
         $type = $data['type'];
-        unset($data['type']);
-        $res = [];
+        $updatedDate = $data['date'];
+        $data = Arr::except($data, ['type', 'date']);
+        $formatedDates = $this->getBlockDates($block, $updatedDate);
         switch ($type) {
             case 'all':
-                $res = $this->updateAll($data, $id);
+                $block->update($data);
                 break;
             case 'this':
-                $res = $this->updateThis($data, $id);
+                $oldBlockData = Arr::except($block->toArray(), ['id', 'created_at', 'updated_at']);
+                $prevBlockData = $oldBlockData;
+                $nextBlockData = $oldBlockData;
+                $prevBlockData['end_on'] = $formatedDates['prev_date'];
+                $nextBlockData['start_date'] = $formatedDates['next_date'];
+                $prevBlock = Block::query()->create($prevBlockData);
+                $nextBlock = Block::query()->create($nextBlockData);
+                $newBlock = Block::query()->create([
+                    'user_id' => $block->user_id,
+                    'title' => $data['title'] ?? $block->title,
+                    'details' => $data['details'] ?? $block->details,
+                    'repeat_every' => $data['repeat_every'] ?? $block->repeat_every,
+                    'repeat_type' => $data['repeat_type'] ?? $block->repeat_type,
+                    'repeat_on' => $data['repeat_on'] ?? $block->repeat_on,
+                    'start_date' => $updatedDate,
+                    'from_time' => $data['from_time'] ?? $block->from_time,
+                    'to_time' => $data['to_time'] ?? $block->to_time,
+                    'end_date' => $data['end_date'] ?? $block->end_date,
+                    'end_on' => !isset($data['repeat_type']) ? Carbon::parse($formatedDates['next_date'])->format('Y-m-d'): $data['end_on'] ?? $block->end_on,
+                    'end_after' => $data['end_after'] ?? $block->end_after,
+                    'color' => $data['color'] ?? $block->color,
+                ]);
+                if (count($tasks) > 0) {
+                    foreach ($tasks as $task) {
+                        $taskData = Arr::except($task->toArray(), ['id', 'created_at', 'updated_at']);
+                        $prevBlockTaskData = $taskData;
+                        $nextBlockTaskData = $taskData;
+                        $newBlockTaskData = $taskData;
+                        $prevBlockTaskData['block_id'] = $prevBlock->id;
+                        $nextBlockTaskData['block_id'] = $nextBlock->id;
+                        $newBlockTaskData['block_id'] = $nextBlock->id;
+                        Task::query()->create($prevBlockTaskData);
+                        Task::query()->create($nextBlockTaskData);
+                        Task::query()->create($newBlockTaskData);
+                        $task->delete();
+                    }
+                }
+
+                $block->delete();
+                $block = $newBlock;
                 break;
             case 'following':
-                $res = $this->updateFollowing($data, $id);
+                $newBlock = Block::query()->create([
+                    'user_id' => $block->user_id,
+                    'title' => $data['title'] ?? $block->title,
+                    'details' => $data['details'] ?? $block->details,
+                    'repeat_every' => $data['repeat_every'] ?? $block->repeat_every,
+                    'repeat_type' => $data['repeat_type'] ?? $block->repeat_type,
+                    'repeat_on' => $data['repeat_on'] ?? $block->repeat_on,
+                    'start_date' => $updatedDate,
+                    'from_time' => $data['from_time'] ?? $block->from_time,
+                    'to_time' => $data['to_time'] ?? $block->to_time,
+                    'end_date' => $data['end_date'] ?? $block->end_date,
+                    'end_on' => $data['end_on'] ?? $block->end_on,
+                    'end_after' => $data['end_after'] ?? $block->end_after,
+                    'color' => $data['color'] ?? $block->color,
+                ]);
+                $block->update([
+                    'end_on' => $formatedDates['prev_date'],
+                ]);
+                foreach ($tasks as $task) {
+                    $taskData = Arr::except($task->toArray(), ['id', 'created_at', 'updated_at']);
+                    $taskData['block_id'] = $newBlock->id;
+                    Task::query()->create($taskData);
+                }
                 break;
+
         }
-        return $res;
+
+        return $block;
     }
 
 
     /**
      * @throws ValidationException
      */
-    public function delete($id, $data): bool
+    public
+    function delete($id, $data): bool
     {
         $block = Block::query()->find($id);
         if (isset($data['type']) && $data['type'] === 'all') {
@@ -77,7 +145,7 @@ class BlockRepository implements BlockRepositoryInterface
                     $task->delete();
                 }
             }
-            return  $block->delete();
+            return $block->delete();
         } elseif (isset($data['type']) && $data['type'] === 'this') {
             if (Carbon::parse($block->start_date) > Carbon::parse($data['date'])) {
                 throw ValidationException::withMessages(['message' => 'Cannot delete this event']);
@@ -87,13 +155,13 @@ class BlockRepository implements BlockRepositoryInterface
             $formatedDates = $this->getBlockDates($block, $data['date']);
             $prevBlockData = $blockData;
             $nextBlockData = $blockData;
-            if ($blockData['end_on']){
+            if ($blockData['end_on']) {
                 $prevBlockData['end_on'] = $formatedDates['prev_date'];
                 $nextBlockData['start_date'] = $formatedDates['next_date'];
-            }elseif ($blockData['end_after']){
+            } elseif ($blockData['end_after']) {
                 $prevBlockData['end_after'] = $data['end_after'];
                 $nextBlockData['start_date'] = $formatedDates['next_date'];
-            }else{
+            } else {
                 $prevBlockData['end_on'] = $formatedDates['prev_date'];
                 $nextBlockData['start_date'] = $formatedDates['next_date'];
             }
@@ -116,13 +184,16 @@ class BlockRepository implements BlockRepositoryInterface
             $formatedDates = $this->getBlockDates($block, $data['date']);
             $newBlockData = $blockData;
             if (Carbon::parse($block->start_date) > Carbon::parse($formatedDates['prev_date'])) {
+                foreach ($tasks as $task) {
+                    $task->delete();
+                }
                 return $block->delete();
             }
             if ($blockData['end_on']) {
                 $newBlockData['end_on'] = $formatedDates['prev_date'];
-            }elseif ($blockData['end_after']){
+            } elseif ($blockData['end_after']) {
                 $newBlockData['end_after'] = $data['end_after'];
-            }else{
+            } else {
                 $newBlockData['end_on'] = $formatedDates['prev_date'];
             }
             $newBlock = Block::query()->create($newBlockData);
@@ -137,80 +208,14 @@ class BlockRepository implements BlockRepositoryInterface
         return false;
     }
 
-    public function find($id, $user_id): Model|Collection|Builder|array|null
+    public
+    function find($id, $user_id): Model|Collection|Builder|array|null
     {
         return Block::query()->where('user_id', $user_id)->find($id);
     }
 
-    private function updateAll($data, $id): Builder|array|Collection|Model
-    {
-
-        $block = Block::query()->find($id);
-        $blockInfo = BlockInfo::query()->where('block_id', $id)->first();
-        $blockInfoData = [];
-        if (isset($data['title'])) {
-            $blockInfoData['title'] = $data['title'];
-        }
-        if (isset($data['details'])) {
-            $blockInfoData['details'] = $data['details'];
-        }
-        unset($data['title']);
-        unset($data['details']);
-        if (!empty($blockInfoData)) {
-            $blockInfo->update($blockInfoData);
-        }
-        if (!empty($data)) {
-            $block->update($data);
-        }
-        return $block;
-    }
-
-    private function updateThis($data, $id):  Builder|array|Collection|Model
-    {
-        $title = $data['title'] ?? null;
-        $details = $data['details'] ?? null;
-        unset($data['title']);
-        unset($data['details']);
-        $block = Block::query()->find($id);
-
-        $newBlock = $block->replicate();
-
-        foreach ($data as $key => $value) {
-            $newBlock->$key = $value;
-        }
-        $newBlock->save();
-        return $newBlock;
-
-    }
-
-    private function updateFollowing($data, $id): Builder|array|Collection|Model
-    {
-
-        $block = Block::query()->find($id);
-        $newBlock = $this->create([
-            'user_id' => $block->user_id,
-            'repeat_every' => $data['repeat_every'] ?? $block->repeat_every,
-            'repeat_type' => $data['repeat_type'] ?? $block->repeat_type,
-            'repeat_on' => $data['repeat_on'] ?? $block->repeat_on,
-            'day_of_week' => $data['day_of_week'],
-            'day_of_month' => $data['day_of_month'],
-            'month_of_year' => $data['month_of_year'],
-            'start_date' => $data['date'],
-            'from_time' => $data['from_time'] ?? $block->from_time,
-            'to_time' => $data['to_time'] ?? $block->to_time,
-            'end_date' => $data['end_date'] ?? $block->end_date,
-            'exclude_dates' => $data['exclude_dates'] ?? $block->exclude_dates,
-            'end_on' => $data['end_on'] ?? $block->end_on,
-            'end_after' => $data['end_after'] ?? $block->end_after,
-            'color' => $data['color'] ?? $block->color,
-
-        ]);
-        return $newBlock;
-
-
-    }
-
-    private function getBlockDates($block, $date): array
+    private
+    function getBlockDates($block, $date): array
     {
         $result = [
             'prev_date' => null,
@@ -218,7 +223,6 @@ class BlockRepository implements BlockRepositoryInterface
         ];
         switch ($block->repeat_type) {
             case 'day':
-
                 $result['prev_date'] = Carbon::parse($date)->subDays(1 * $block->repeat_every);
                 $result['next_date'] = Carbon::parse($date)->addDays(1 * $block->repeat_every);
                 break;
