@@ -24,7 +24,7 @@ class UpdateHabitRequest extends FormRequest
     {
         return [
             'title' => ['string', 'max:255'],
-            'details' => ['string'],
+            'details' => ['nullable', 'string'],
         ];
     }
 }
