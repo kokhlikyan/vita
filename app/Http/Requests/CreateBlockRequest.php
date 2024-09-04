@@ -32,7 +32,7 @@ class CreateBlockRequest extends FormRequest
              'details' => ['nullable', 'string'],
             'repeat_every' => ['integer', 'min:1'],
             'repeat_type' => ['string', 'max:255', 'in:' . $blockTypesString],
-            'repeat_on' => ['array', 'max:7', 'min:1', 'in:0,1,2,3,4,5,6'],
+            'repeat_on' => ['required_if:repeat_type,week', 'array', 'max:7', 'min:1', 'in:0,1,2,3,4,5,6'],
             'repeat_on.*' => ['integer', 'min:0', 'max:6'],
             'start_date' => [
                 'required',

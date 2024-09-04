@@ -349,4 +349,15 @@ class BlockController extends Controller
             'data' => new BlockResource($block),
         ]);
     }
+
+    public function filteredByDate(Request $request, $date): JsonResponse
+    {
+        $blocks = $this->blockService->filteredByDate($date, $request->input('sort', 1));
+        if (empty($blocks)) {
+            return response()->json(['message' => 'Resource not found'], 404);
+        }
+        return response()->json([
+            'data' => BlockResource::collection($blocks),
+        ]);
+    }
 }

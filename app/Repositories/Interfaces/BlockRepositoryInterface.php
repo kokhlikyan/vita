@@ -18,4 +18,6 @@ interface BlockRepositoryInterface
 
     public function find($id, $user_id);
 
+    public function filteredByDate(int $user_id, string $date, int $sort): Builder|array|Collection|Model;
+
 }
