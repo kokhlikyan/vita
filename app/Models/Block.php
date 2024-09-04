@@ -30,6 +30,7 @@ class Block extends Model
         return [
             'all_day' => 'boolean',
             'repeat_on' => 'array',
+            'repeat_on.*' => 'integer',
         ];
     }
 

@@ -75,7 +75,7 @@ class BlockRepository implements BlockRepositoryInterface
                     'from_time' => $data['from_time'] ?? $block->from_time,
                     'to_time' => $data['to_time'] ?? $block->to_time,
                     'end_date' => $data['end_date'] ?? $block->end_date,
-                    'end_on' => !isset($data['repeat_type']) ? Carbon::parse($formatedDates['next_date'])->format('Y-m-d'): $data['end_on'] ?? $block->end_on,
+                    'end_on' => !isset($data['repeat_type']) ? Carbon::parse($formatedDates['next_date'])->format('Y-m-d') : $data['end_on'] ?? $block->end_on,
                     'end_after' => $data['end_after'] ?? $block->end_after,
                     'color' => $data['color'] ?? $block->color,
                 ]);
@@ -244,5 +244,84 @@ class BlockRepository implements BlockRepositoryInterface
 
     }
 
+    public function filteredByDate(int $user_id, string $date, int $sort): Collection|array
+    {
+        $results = [];
+        $startOfDay = Carbon::parse($date);
+        $blocks = Block::query()
+            ->where('user_id', $user_id)
+            ->where('start_date', '<=', $date)
+            ->where(function ($query) use ($startOfDay) {
+                $query->where('end_on', '>=', $startOfDay)
+                    ->orWhere('end_on', null);
+            })
+            ->get();
 
+        foreach ($blocks as $block) {
+            $convertedDate = Carbon::parse($date);
+            while ($convertedDate->format('Y-m-d') < Carbon::parse($date)->addDays($sort)->format('Y-m-d')) {
+                $blockClone = clone $block;
+                if ($block->repeat_type === 'day') {
+                    $day = Carbon::parse($block->start_date);
+                    $loopEnd = Carbon::parse($date)->addDays($sort);
+                    if ($block->end_after) $loopEnd = Carbon::parse($block->start_date)->addDays($block->end_after);
+                    if ($block->end_on) $loopEnd = Carbon::parse($block->end_on);
+                    while ($day->format('Y-m-d') <= $loopEnd->format('Y-m-d')) {
+                        if ($day->format('Y-m-d') >= Carbon::parse($date)->format('Y-m-d') &&
+                            $day->format('Y-m-d') < Carbon::parse($date)->addDays($sort)->format('Y-m-d')) {
+                            $blockClone = clone $block;
+                            $blockClone->start_date = $day->format('Y-m-d');
+                            $blockClone->end_date = $day->format('Y-m-d');
+                            $results[] = $blockClone;
+                        }
+                        $day = $day->addDays($block->repeat_every);
+                    }
+                } elseif ($block->repeat_type === 'week') {
+                    foreach ($block->repeat_on as $day) {
+                        $dayOfWeek = $convertedDate->copy()->startOfWeek()->addDays((int)$day);
+                        if (
+                            ($dayOfWeek->format('Y-m-d') >= Carbon::parse($date)->format('Y-m-d') &&
+                                $dayOfWeek->format('Y-m-d') <= Carbon::parse($date)->addDays($sort)->format('Y-m-d')) ||
+                            $dayOfWeek->format('Y-m-d') === Carbon::parse($date)->format('Y-m-d')) {
+                            $blockClone = clone $block;
+                            $blockClone->start_date = $dayOfWeek->format('Y-m-d');
+                            $blockClone->end_date = $dayOfWeek->format('Y-m-d');
+                            $results[] = $blockClone;
+                        }
+                    }
+                } elseif ($block->repeat_type === 'month') {
+                    $dayOfMonth = $convertedDate->copy()->startOfMonth()->addDays(Carbon::parse($block->start_date)->day - 1);
+                    if (
+                        $dayOfMonth->format('Y-m-d') === Carbon::parse($date)->format('Y-m-d') ||
+                        (
+                            $dayOfMonth->format('Y-m-d') >= Carbon::parse($date)->format('Y-m-d') &&
+                            $dayOfMonth->format('Y-m-d') <= Carbon::parse($date)->addDays($sort)->format('Y-m-d')
+                        )
+                    ) {
+                        $blockClone = clone $block;
+                        $blockClone->start_date = $dayOfMonth->format('Y-m-d');
+                        $blockClone->end_date = $dayOfMonth->format('Y-m-d');
+                        $results[] = $blockClone;
+                    }
+                } elseif ($block->repeat_type === 'year') {
+                    $dayOfYear = $convertedDate->copy()->startOfYear()->addDays(Carbon::parse($block->start_date)->dayOfYear - 1);
+                    if (
+                        $dayOfYear->format('Y-m-d') === Carbon::parse($date)->format('Y-m-d') ||
+                        (
+                            $dayOfYear->format('Y-m-d') >= Carbon::parse($date)->format('Y-m-d') &&
+                            $dayOfYear->format('Y-m-d') <= Carbon::parse($date)->addDays($sort)->format('Y-m-d')
+                        )
+                    ) {
+                        $blockClone = clone $block;
+                        $blockClone->start_date = $dayOfYear->format('Y-m-d');
+                        $blockClone->end_date = $dayOfYear->format('Y-m-d');
+                        $results[] = $blockClone;
+                    }
+                }
+                break;
+            }
+
+        }
+        return $results;
+    }
 }

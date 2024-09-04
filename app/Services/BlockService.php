@@ -48,4 +48,10 @@ readonly class BlockService
     {
         return $this->blockRepository->update($data, $id);
     }
+
+    public function filteredByDate(string $date, int $sort): Collection|Builder|array
+    {
+        $user = auth()->user();
+        return $this->blockRepository->filteredByDate($user->id, $date, $sort);
+    }
 }

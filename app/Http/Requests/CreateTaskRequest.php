@@ -32,7 +32,7 @@ class CreateTaskRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'details' => ['nullable', 'string'],
             'urgent' => ['boolean'],
-            'start_date' => ['required_if:block_id,!null', 'date', 'after_or_equal:today'],
+            'start_date' => ['required_if:block_id,null', 'date', 'after_or_equal:today'],
 
         ];
     }
