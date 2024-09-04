@@ -71,10 +71,6 @@ use OpenApi\Attributes as OA;
             type: 'boolean',
         ),
         new OA\Property(
-            property: 'all_day',
-            type: 'boolean',
-        ),
-        new OA\Property(
             property: 'start_date',
             type: 'string',
             format: 'date',

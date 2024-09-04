@@ -255,6 +255,9 @@ class BlockRepository implements BlockRepositoryInterface
                 $query->where('end_on', '>=', $startOfDay)
                     ->orWhere('end_on', null);
             })
+            ->with('tasks', function ($query) {
+                $query->select('id', 'block_id', 'title', 'details', 'completed','urgent', 'created_at', 'updated_at');
+            })
             ->get();
 
         foreach ($blocks as $block) {

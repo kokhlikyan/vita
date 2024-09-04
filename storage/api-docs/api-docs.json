@@ -866,6 +866,64 @@
                 ]
             }
         },
+        "/api/v1/blocks/filter/{date}": {
+            "get": {
+                "tags": [
+                    "Blocks"
+                ],
+                "summary": "Get all blocks by date",
+                "operationId": "af682c1b921c7a93bc78e38b9e459981",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "description": "The date of the resource",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort the blocks by date",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Blocks found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BlockSchema"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/goals": {
             "get": {
                 "tags": [
@@ -2199,21 +2257,6 @@
                     "details": {
                         "type": "string"
                     },
-                    "all_day": {
-                        "type": "boolean"
-                    },
-                    "repeat_every": {
-                        "type": "integer"
-                    },
-                    "repeat_type": {
-                        "type": "string"
-                    },
-                    "repeat_on": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
                     "start_date": {
                         "type": "string",
                         "format": "date"
@@ -2230,13 +2273,6 @@
                         "type": "string",
                         "format": "date"
                     },
-                    "end_on": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "end_after": {
-                        "type": "integer"
-                    },
                     "color": {
                         "type": "string"
                     },
@@ -2251,8 +2287,38 @@
                     "tasks": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/TaskSchema"
+                            "$ref": "#/components/schemas/BlockTaskSchema"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "BlockTaskSchema": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "block_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "type": "string"
+                    },
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -2444,9 +2510,6 @@
                         "type": "string"
                     },
                     "completed": {
-                        "type": "boolean"
-                    },
-                    "all_day": {
                         "type": "boolean"
                     },
                     "start_date": {

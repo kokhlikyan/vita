@@ -23,12 +23,7 @@ class BlockResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        $tasks = $this->tasks;
-        if (isset($this->params['date'])) {
-            $startOfDay = Carbon::parse($this->params['date'])->startOfDay();
-            $endOfDay = Carbon::parse($this->params['date'])->endOfDay();
-            $tasks = $tasks->whereBetween('start_date', [$startOfDay, $endOfDay]);
-        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -40,9 +35,9 @@ class BlockResource extends JsonResource
             'to_time' => $this->to_time,
             'end_date' => $this->end_date,
             'color' => $this->color,
-            'tasks' =>  TaskResource::collection($tasks),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'tasks' =>$this->whenLoaded('tasks'),
         ];
     }
 }

@@ -350,6 +350,50 @@ class BlockController extends Controller
         ]);
     }
 
+
+    #[OA\Get(
+        path: "/api/v1/blocks/filter/{date}",
+        summary: "Get all blocks by date",
+        security: [
+            ['bearerAuth' => []]
+        ],
+        tags: ["Blocks"],
+        parameters: [
+            new OA\Parameter(
+                name: "date",
+                description: "The date of the resource",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "string", format: "date")
+            ),
+            new OA\Parameter(
+                name: "sort",
+                description: "Sort the blocks by date",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Blocks found",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(ref: "#/components/schemas/BlockSchema")
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Resource not found"
+            ),
+        ]
+    )]
     public function filteredByDate(Request $request, $date): JsonResponse
     {
         $blocks = $this->blockService->filteredByDate($date, $request->input('sort', 1));

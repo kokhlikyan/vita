@@ -21,25 +21,6 @@ use OpenApi\Attributes as OA;
             type: 'string',
         ),
         new OA\Property(
-            property: 'all_day',
-            type: 'boolean',
-        ),
-        new OA\Property(
-            property: 'repeat_every',
-            type: 'integer',
-        ),
-        new OA\Property(
-            property: 'repeat_type',
-            type: 'string',
-        ),
-        new OA\Property(
-            property: 'repeat_on',
-            type: 'array',
-            items: new OA\Items(
-                type: 'integer',
-            ),
-        ),
-        new OA\Property(
             property: 'start_date',
             type: 'date',
         ),
@@ -59,15 +40,6 @@ use OpenApi\Attributes as OA;
             format: 'date',
         ),
         new OA\Property(
-            property: 'end_on',
-            type: 'string',
-            format: 'date',
-        ),
-        new OA\Property(
-            property: 'end_after',
-            type: 'integer',
-        ),
-        new OA\Property(
             property: 'color',
             type: 'string',
         ),
@@ -83,7 +55,7 @@ use OpenApi\Attributes as OA;
             property: 'tasks',
             type: 'array',
             items: new OA\Items(
-                ref: '#/components/schemas/TaskSchema'
+                ref: '#/components/schemas/BlockTaskSchema'
             ),
         )
     ]
