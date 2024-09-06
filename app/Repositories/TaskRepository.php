@@ -91,54 +91,13 @@ class TaskRepository implements TaskRepositoryInterface
             ->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
                 $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
             })
-            ->when($type === 'independent', function ($query) {
-                $query->doesntHave('block')
-                    ->doesntHave('goal')
-                    ->doesntHave('habit');
-            })
-            ->when($type === 'block', function ($query) {
-                $query->whereHas('block');
-            })
             ->when($type === 'goal', function ($query) {
                 $query->whereHas('goal');
             })
             ->when($type === 'habit', function ($query) {
                 $query->whereHas('habit');
             })->orderBy('urgent', 'desc');
-
-        $blockQuery = Block::query()
-            ->where('blocks.user_id', $user_id)
-            ->with(['tasks' => function ($query) use ($startOfDay, $endOfDay, $sortDayCount) {
-                $query->when($sortDayCount, function ($query) use ($startOfDay, $endOfDay) {
-                    $query->whereBetween('start_date', [$startOfDay, $endOfDay]);
-                })->orderBy('urgent', 'desc');
-            }])
-            ->when($type === 'independent', function ($query) {
-                $query->whereHas('tasks', function ($query) {
-                    $query->doesntHave('block')
-                        ->doesntHave('goal')
-                        ->doesntHave('habit');
-                });
-            })
-            ->when($type === 'block', function ($query) {
-                $query->whereHas('tasks', function ($query) {
-                    $query->whereHas('block');
-                });
-            })
-            ->when($type === 'goal', function ($query) {
-                $query->whereHas('tasks', function ($query) {
-                    $query->whereHas('goal');
-                });
-            })
-            ->when($type === 'habit', function ($query) {
-                $query->whereHas('tasks', function ($query) {
-                    $query->whereHas('habit');
-                });
-            });
-        return [
-            'tasks' => $taskQuery->get(),
-            'blocks' => $blockQuery->get()
-        ];
+        return $taskQuery->get();
     }
 
     public function filteredTasks($params, $user_id): Collection|array
@@ -165,14 +124,8 @@ class TaskRepository implements TaskRepositoryInterface
     public function recursiveDelete($tasks): void
     {
         if ($tasks->count() === 0) return;
-
         foreach ($tasks as $task) {
             $task->delete();
-            if (!$task->completed) {
-                $task->forceDelete();
-            } else {
-                $task->delete();
-            }
         }
     }
 
@@ -210,29 +163,5 @@ class TaskRepository implements TaskRepositoryInterface
         return $query->paginate($params['page'] ?? null);
     }
 
-    public function getMissedTasks($params, $user_id)
-    {
-        $page = $params['page'] ?? 15;
 
-        $tasksQuery = Task::query()
-            ->where('user_id', $user_id)
-            ->where('start_date', '<', now())
-            ->when($params['date'] ?? false, function ($query) use ($params) {
-                $startDate = Carbon::parse($params['date'])->startOfMonth();
-                $endDate = Carbon::parse($params['date'])->endOfMonth();
-                if (isset($params['today']) && $params['today']) {
-                    $startDate = Carbon::parse($params['date'])->startOfDay();
-                    $endDate = Carbon::parse($params['date'])->endOfDay();
-                }
-
-                $query->whereBetween('start_date', [$startDate, $endDate]);
-            })
-            ->where('completed', false)
-            ->orderBy('start_date');
-
-        if (isset($params['today']) && $params['today']) {
-            return $tasksQuery->get();
-        }
-         return $tasksQuery->paginate($page);
-    }
 }

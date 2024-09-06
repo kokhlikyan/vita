@@ -25,7 +25,6 @@ class TaskFactory extends Factory
             'title' => $this->faker->sentence,
             'details' => $this->faker->paragraph,
             'completed' => $this->faker->boolean,
-            'all_day' => $this->faker->boolean,
             'start_date' => $this->faker->dateTimeBetween('-10 week', '+12 month')
         ];
         return $data;

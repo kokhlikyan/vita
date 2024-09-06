@@ -1898,10 +1898,8 @@
                         "schema": {
                             "type": "string",
                             "enum": [
-                                "independent",
                                 "goal",
-                                "habit",
-                                "block"
+                                "habit"
                             ]
                         }
                     }
@@ -1913,22 +1911,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "tasks": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/TaskSchema"
-                                                    }
-                                                },
-                                                "blocks": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/BlockSchema"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                        "tasks": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskSchema"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -2312,6 +2299,9 @@
                     "completed": {
                         "type": "boolean"
                     },
+                    "urgent": {
+                        "type": "boolean"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
@@ -2467,41 +2457,13 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "block": {
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "title": {
-                                "type": "string"
-                            },
-                            "color": {
-                                "type": "string"
-                            }
-                        },
-                        "type": "object"
+                    "goal_id": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "goal": {
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "title": {
-                                "type": "string"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "habit": {
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "title": {
-                                "type": "string"
-                            }
-                        },
-                        "type": "object"
+                    "habit_id": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "title": {
                         "type": "string"
@@ -2512,9 +2474,13 @@
                     "completed": {
                         "type": "boolean"
                     },
-                    "start_date": {
+                    "start": {
                         "type": "string",
-                        "format": "date"
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "end": {
+                        "type": "string",
+                        "example": "2024-01-01 00:00:00"
                     },
                     "created_at": {
                         "type": "string",

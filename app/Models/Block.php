@@ -21,6 +21,12 @@ class Block extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class)
+            ->with('goal', function ($query) {
+                $query->select('id', 'title');
+            })
+            ->with('habit', function ($query) {
+                $query->select('id', 'title');
+            })
             ->orderBy('urgent', 'desc')
             ->orderBy('start_date');
     }
@@ -28,7 +34,6 @@ class Block extends Model
     protected function casts()
     {
         return [
-            'all_day' => 'boolean',
             'repeat_on' => 'array',
             'repeat_on.*' => 'integer',
         ];

@@ -12,51 +12,15 @@ use OpenApi\Attributes as OA;
             type: 'integer',
             example: 1
         ),
-        new OA\property(
-            property: 'block',
-            properties: [
-                new OA\Property(
-                    property: 'id',
-                    type: 'integer',
-                ),
-                new OA\Property(
-                    property: 'title',
-                    type: 'string',
-                ),
-                new OA\Property(
-                    property: 'color',
-                    type: 'string',
-                )
-            ],
-            type: 'object'
+        new OA\Property(
+            property: 'goal_id',
+            type: 'integer',
+            example: 1
         ),
-        new OA\property(
-            property: 'goal',
-            properties: [
-                new OA\Property(
-                    property: 'id',
-                    type: 'integer',
-                ),
-                new OA\Property(
-                    property: 'title',
-                    type: 'string',
-                ),
-            ],
-            type: 'object'
-        ),
-        new OA\property(
-            property: 'habit',
-            properties: [
-                new OA\Property(
-                    property: 'id',
-                    type: 'integer',
-                ),
-                new OA\Property(
-                    property: 'title',
-                    type: 'string',
-                ),
-            ],
-            type: 'object'
+        new OA\Property(
+            property: 'habit_id',
+            type: 'integer',
+            example: 1
         ),
         new OA\Property(
             property: 'title',
@@ -71,9 +35,14 @@ use OpenApi\Attributes as OA;
             type: 'boolean',
         ),
         new OA\Property(
-            property: 'start_date',
+            property: 'start',
             type: 'string',
-            format: 'date',
+            example: '2024-01-01 00:00:00'
+        ),
+        new OA\Property(
+            property: 'end',
+            type: 'string',
+            example: '2024-01-01 00:00:00'
         ),
         new OA\Property(
             property: 'created_at',

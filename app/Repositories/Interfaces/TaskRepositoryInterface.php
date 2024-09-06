@@ -23,6 +23,4 @@ interface TaskRepositoryInterface
     public function getHistory($params, $user_id);
     public function getOverview($params, $user_id);
 
-    public function getMissedTasks($params, $user_id);
-
 }

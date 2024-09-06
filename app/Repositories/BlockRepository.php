@@ -20,6 +20,10 @@ class BlockRepository implements BlockRepositoryInterface
     {
         return Block::query()
             ->where('blocks.user_id', $user_id)
+             ->with('tasks', function ($query) {
+                $query->where('completed', false)
+                ->select('id', 'block_id', 'goal_id', 'habit_id', 'title', 'details', 'completed','urgent', 'created_at', 'updated_at');
+            })
             ->orderByDesc('created_at')
             ->get();
     }
@@ -211,7 +215,11 @@ class BlockRepository implements BlockRepositoryInterface
     public
     function find($id, $user_id): Model|Collection|Builder|array|null
     {
-        return Block::query()->where('user_id', $user_id)->find($id);
+        return Block::query()->where('user_id', $user_id)
+            ->with('tasks', function ($query) {
+            $query->where('completed', false)
+            ->select('id', 'block_id', 'goal_id', 'habit_id', 'title', 'details', 'completed','urgent', 'created_at', 'updated_at');
+        })->find($id);
     }
 
     private
@@ -244,7 +252,7 @@ class BlockRepository implements BlockRepositoryInterface
 
     }
 
-    public function filteredByDate(int $user_id, string $date, int $sort): Collection|array
+    public function filteredByDate(int $user_id, string $date, int $sort, string $type): Collection|array
     {
         $results = [];
         $startOfDay = Carbon::parse($date);
@@ -256,7 +264,18 @@ class BlockRepository implements BlockRepositoryInterface
                     ->orWhere('end_on', null);
             })
             ->with('tasks', function ($query) {
-                $query->select('id', 'block_id', 'title', 'details', 'completed','urgent', 'created_at', 'updated_at');
+                $query->where('completed', false)
+                ->select('id', 'block_id', 'goal_id', 'habit_id', 'title', 'details', 'completed','urgent', 'created_at', 'updated_at');
+            })
+              ->when($type === 'goal', function ($query) {
+                $query->whereHas('tasks', function ($query) {
+                    $query->whereHas('goal');
+                });
+            })
+            ->when($type === 'habit', function ($query) {
+                $query->whereHas('tasks', function ($query) {
+                    $query->whereHas('habit');
+                });
             })
             ->get();
 
@@ -320,6 +339,10 @@ class BlockRepository implements BlockRepositoryInterface
                         $blockClone->end_date = $dayOfYear->format('Y-m-d');
                         $results[] = $blockClone;
                     }
+                }else {
+                    $blockClone->start_date = $block->start_date;
+                    $blockClone->end_date = $block->end_date;
+                    $results[] = $blockClone;
                 }
                 break;
             }

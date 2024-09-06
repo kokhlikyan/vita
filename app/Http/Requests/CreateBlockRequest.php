@@ -45,7 +45,7 @@ class CreateBlockRequest extends FormRequest
                 'date_format:Y-m-d',
                 'after_or_equal:start_date'
             ],
-            'from_time' => ['required', 'date_format:H:i',  new AfterNowTime()],
+            'from_time' => ['required', 'date_format:H:i'],
             'to_time' => ['required', 'date_format:H:i',  'after:from_time'],
             'color' => ['string', 'max:255'],
             'end_on' => ['date', 'date_format:Y-m-d'],

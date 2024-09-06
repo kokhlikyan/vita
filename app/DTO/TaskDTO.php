@@ -57,11 +57,6 @@ class TaskDTO extends BaseDTO
         return $this->completed;
     }
 
-    public function getAllDay(): bool
-    {
-        return $this->all_day;
-    }
-
     public function getStartDate(): string
     {
         return $this->start_date;

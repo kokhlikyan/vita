@@ -396,10 +396,13 @@ class BlockController extends Controller
     )]
     public function filteredByDate(Request $request, $date): JsonResponse
     {
-        $blocks = $this->blockService->filteredByDate($date, $request->input('sort', 1));
-        if (empty($blocks)) {
-            return response()->json(['message' => 'Resource not found'], 404);
-        }
+        $request->validate([
+            'sort' => 'integer',
+            'type' => 'nullable|string|in:goal,habit',
+        ]);
+        $type = $request->input('type') ?? "";
+        $blocks = $this->blockService->filteredByDate($date, $request->input('sort', 1), $type);
+
         return response()->json([
             'data' => BlockResource::collection($blocks),
         ]);
